@@ -28,43 +28,19 @@
  * #L%
  */
 
-package net.imglib2.ops.condition;
+package net.imagej.ops.condition;
+
+import net.imagej.ops.Function;
 
 /**
- * A {@link Condition} that combines two other Conditions in an XOR fashion.
- * The Condition is true if exactly one of the child conditions is true and
- * false otherwise.
- * 
+ * An interface that can be tested for truth or falsity for a given input.
+ *  
  * @author Barry DeZonia
- * @deprecated Use net.imagej.ops instead.
+ * @author Aparna Pal
  */
-@Deprecated
-public class XorCondition<T> implements Condition<T> {
-
-	// -- instance variables --
+public interface Condition<T> extends Function<T, Boolean> {
 	
-	private final Condition<T> cond1;
-	private final Condition<T> cond2;
-
-	// -- constructor --
+	boolean isTrue(T val); 
 	
-	public XorCondition(Condition<T> cond1, Condition<T> cond2) {
-		this.cond1 = cond1;
-		this.cond2 = cond2;
-	}
-	
-	// -- Condition methods --
-	
-	@Override
-	public boolean isTrue(T point) {
-		boolean one = cond1.isTrue(point)^cond2.isTrue(point);
-		boolean two = cond2.isTrue(point);
-		return (one && !two) || (!one && two);
-	}
-	
-	@Override
-	public XorCondition<T> copy() {
-		return new XorCondition<T>(cond1.copy(), cond2.copy());
-	}
-
 }
+
