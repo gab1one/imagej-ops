@@ -40,7 +40,7 @@ import net.imagej.ops.Function;
  */
 public interface Condition<T> extends Function<T, Boolean> {
 	
-	boolean isTrue(T val);
+	boolean isTrue(T val); 
 	
 }
 

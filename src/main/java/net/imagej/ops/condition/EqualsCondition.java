@@ -27,7 +27,7 @@ public class EqualsCondition extends AbstractCondition<Object> {
 		Boolean result = (Boolean) op.run("and", 5.0, c1, c2);
 		System.out.println(result);
 	}
-//(a == b) && c
+
 
 
 }

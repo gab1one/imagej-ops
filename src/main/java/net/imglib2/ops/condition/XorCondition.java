@@ -57,7 +57,7 @@ public class XorCondition<T> implements Condition<T> {
 	
 	@Override
 	public boolean isTrue(T point) {
-		boolean one = cond1.isTrue(point);
+		boolean one = cond1.isTrue(point)^cond2.isTrue(point);
 		boolean two = cond2.isTrue(point);
 		return (one && !two) || (!one && two);
 	}
