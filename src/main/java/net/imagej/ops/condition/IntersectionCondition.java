@@ -12,7 +12,7 @@ import org.scijava.plugin.Parameter;
 import org.scijava.plugin.Plugin;
  
 @Plugin(type = Op.class, name = "union")
-public class UnionCondition<T> extends AbstractCondition<Object>  {
+public class IntersectionCondition<T> extends AbstractCondition<Object>  {
      
      
  
@@ -27,12 +27,12 @@ public class UnionCondition<T> extends AbstractCondition<Object>  {
          
         for(Condition<T> c1: conditions)
         {
-            if(c1.isTrue((T) val))
+            if(!c1.isTrue((T) val))
             {
-                return true;
+                return false;
             }
         }
-        return false;
+        return true;
          
     }
  
