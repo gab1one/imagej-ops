@@ -10,12 +10,13 @@ import org.scijava.Context;
 import net.imagej.ops.AbstractOpTest;
 import net.imagej.ops.OpService;
  
-public class UnionTest<T> extends AbstractOpTest {
+public class IntersectionTest<T> extends AbstractOpTest {
  
     @Test
-    public void testUnion()
+    public void testIntersection()
     {
-        ArrayList<Condition<T>> condition = new ArrayList<Condition<T>>();
+         
+ArrayList<Condition<T>> condition = new ArrayList<Condition<T>>();
          
         Context ctx = new Context();
         OpService op = ctx.service(OpService.class);
@@ -30,11 +31,12 @@ public class UnionTest<T> extends AbstractOpTest {
         condition.add((Condition<T>) c2);
          
         Boolean result = (Boolean) (op).run("union", condition);
-        assertSame(result, true);
+        assertSame(result, false);
          
-        condition.add(1, (Condition<T>) c1);
+        condition.add(0, (Condition<T>) c2);
         Boolean result1 = (Boolean) (op).run("union", condition);
-        assertSame(result1, false);
- 
+        assertSame(result1, true);
+         
+         
     }
 }
