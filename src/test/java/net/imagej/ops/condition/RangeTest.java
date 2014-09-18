@@ -8,19 +8,19 @@ import org.scijava.Context;
 import net.imagej.ops.AbstractOpTest;
 import net.imagej.ops.OpService;
  
-public class EqualsTest extends AbstractOpTest {
+public class RangeTest extends AbstractOpTest {
  
     @Test
-    public void testEquals()
+    public void testRange()
     {
          
         Context ctx = new Context();
         OpService op = ctx.service(OpService.class);
          
-        Boolean result = (Boolean) (op).run("equals", 5.0, 4.0);
-        assertSame(result, false);
+        Boolean result = (Boolean) (op).run("range", 0, 20, 2);
+        assertSame(result, true);
          
-        Boolean result2 = (Boolean) (op).run("equals", 5.0, 5.0);
-        assertSame(result2, true);
+        Boolean result1 = (Boolean) (op).run("range", 20, 0, 2);
+        assertSame(result1, false);
     }
 }

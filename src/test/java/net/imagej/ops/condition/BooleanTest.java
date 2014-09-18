@@ -11,15 +11,16 @@ import net.imagej.ops.OpService;
 public class BooleanTest extends AbstractOpTest {
  
     @Test
-    public void AndTest()
+    public void testBoolean()
     {
          
         Context ctx = new Context();
         OpService op = ctx.service(OpService.class);
          
-        Condition<?> c1 =  (Condition<?>) op.op("and", 5.0, 4.0);
+        Boolean result = (Boolean) (op).run("and", 5.0, 4.0);
+        assertSame(result, false);
          
-         
-        Condition<?> c2 =  (Condition<?>) op.op("and", 5.0, 5.0);
+        Boolean result1 = (Boolean) (op).run("and", 5.0, 5.0);
+        assertSame(result1, true);
     }
 }
