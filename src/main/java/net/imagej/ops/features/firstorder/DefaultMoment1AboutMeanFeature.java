@@ -1,6 +1,6 @@
 /*
  * #%L
- * ImageJ software for multidimensional image processing and analysis.
+ * ImageJ OPS: a framework for reusable algorithms.
  * %%
  * Copyright (C) 2014 Board of Regents of the University of
  * Wisconsin-Madison and University of Konstanz.
@@ -28,41 +28,58 @@
  * #L%
  */
 
-package net.imagej.ops.threshold;
+package net.imagej.ops.features.firstorder;
 
 import net.imagej.ops.Op;
-import net.imagej.ops.OpService;
-import net.imagej.ops.statistics.firstorder.realtype.DefaultMeanIRT;
-import net.imglib2.type.logic.BitType;
+import net.imagej.ops.features.FeatureService;
+import net.imagej.ops.features.firstorder.FirstOrderFeatures.MeanFeature;
+import net.imagej.ops.features.firstorder.FirstOrderFeatures.Moment1AboutMeanFeature;
+import net.imagej.ops.features.geometric.GeometricFeatures.AreaFeature;
+import net.imagej.ops.statistics.firstorder.FirstOrderStatOps.Moment1AboutMean;
 import net.imglib2.type.numeric.RealType;
-import net.imglib2.type.numeric.real.DoubleType;
 
+import org.scijava.ItemIO;
+import org.scijava.Priority;
 import org.scijava.plugin.Parameter;
 import org.scijava.plugin.Plugin;
 
 /**
- * @author Martin Horn
+ * Generic implementation of {@link Moment1AboutMean}. Use
+ * {@link FeatureService} to compile this {@link Op}.
+ * 
+ * @author Christian Dietz
+ * @author Andreas Graumann
  */
-@Plugin(type = Op.class)
-public class LocalMean<T extends RealType<T>> extends LocalThresholdMethod<T> {
+@Plugin(type = Op.class, name = Moment1AboutMean.NAME, label = Moment1AboutMean.LABEL, priority = Priority.VERY_HIGH_PRIORITY)
+public class DefaultMoment1AboutMeanFeature implements Moment1AboutMeanFeature {
 
 	@Parameter
-	private double c;
+	private Iterable<? extends RealType<?>> irt;
 
 	@Parameter
-	private OpService ops;
+	private MeanFeature mean;
 
-	private DefaultMeanIRT mean;
+	@Parameter
+	private AreaFeature area;
+
+	@Parameter(type = ItemIO.OUTPUT)
+	private double out;
 
 	@Override
-	public BitType compute(Pair<T> input, BitType output) {
-		if (mean == null) {
-			mean = (DefaultMeanIRT) ops.op(DefaultMeanIRT.class, DoubleType.class,
-					input.neighborhood);
+	public void run() {
+		final double tmpMean = mean.getFeatureValue();
+
+		double res = 0.0;
+		for (final RealType<?> val : irt) {
+			res += val.getRealDouble() - tmpMean;
 		}
-		final DoubleType m = (DoubleType) mean.compute(input.neighborhood,
-				new DoubleType());
-		output.set(input.pixel.getRealDouble() > m.getRealDouble() - c);
-		return output;
+
+		out = res;
+		out = res / area.getFeatureValue();
+	}
+
+	@Override
+	public double getFeatureValue() {
+		return out;
 	}
 }

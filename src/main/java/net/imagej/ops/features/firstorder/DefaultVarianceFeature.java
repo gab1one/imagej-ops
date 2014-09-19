@@ -1,6 +1,6 @@
 /*
  * #%L
- * ImageJ software for multidimensional image processing and analysis.
+ * ImageJ OPS: a framework for reusable algorithms.
  * %%
  * Copyright (C) 2014 Board of Regents of the University of
  * Wisconsin-Madison and University of Konstanz.
@@ -28,45 +28,43 @@
  * #L%
  */
 
-package net.imagej.ops.statistics;
+package net.imagej.ops.features.firstorder;
 
-import static org.junit.Assert.assertEquals;
-import net.imagej.ops.AbstractOpTest;
-import net.imagej.ops.statistics.firstorder.FirstOrderStatOps.Mean;
-import net.imglib2.Cursor;
-import net.imglib2.img.Img;
-import net.imglib2.type.numeric.integer.ByteType;
-import net.imglib2.type.numeric.real.DoubleType;
+import net.imagej.ops.Op;
+import net.imagej.ops.features.FeatureService;
+import net.imagej.ops.features.firstorder.FirstOrderFeatures.Moment2AboutMeanFeature;
+import net.imagej.ops.features.firstorder.FirstOrderFeatures.VarianceFeature;
+import net.imagej.ops.statistics.firstorder.FirstOrderStatOps.Variance;
 
-import org.junit.Test;
+import org.scijava.ItemIO;
+import org.scijava.Priority;
+import org.scijava.plugin.Parameter;
+import org.scijava.plugin.Plugin;
 
 /**
- * Tests {@link Mean}.
+ * Generic implementation of {@link Variance}. Use {@link FeatureService} to
+ * compile this {@link Op}.
  * 
- * @author Curtis Rueden
+ * @author Christian Dietz
+ * @author Andreas Graumann
  */
-public class MeanTest extends AbstractOpTest {
+@Plugin(type = Op.class, label = Variance.LABEL, name = Variance.NAME, priority = Priority.VERY_HIGH_PRIORITY)
+public class DefaultVarianceFeature implements VarianceFeature {
 
-	@Test
-	public void testMean() {
-		final Img<ByteType> image = generateByteTestImg(true, 40, 50);
-		DoubleType mean = (DoubleType) ops.mean(DoubleType.class, image);
+	@Parameter
+	private Moment2AboutMeanFeature moment2;
 
-		assertEquals(1.0 / 15.625, mean.get(), 0.0);
+	@Parameter(type = ItemIO.OUTPUT)
+	private double out;
 
-		Cursor<ByteType> c = image.cursor();
+	@Override
+	public void run() {
+		out = moment2.getFeatureValue();
+	}
 
-		// this time lets just make every value 100
-		while (c.hasNext()) {
-			c.fwd();
-			c.get().setReal(100.0);
-		}
-
-		mean = (DoubleType) ops.mean(DoubleType.class, image);
-
-		// the mean should be 100
-		assertEquals(100.0, mean.get(), 0.0);
-
+	@Override
+	public double getFeatureValue() {
+		return out;
 	}
 
 }

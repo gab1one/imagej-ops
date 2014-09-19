@@ -1,6 +1,6 @@
 /*
  * #%L
- * ImageJ software for multidimensional image processing and analysis.
+ * ImageJ OPS: a framework for reusable algorithms.
  * %%
  * Copyright (C) 2014 Board of Regents of the University of
  * Wisconsin-Madison and University of Konstanz.
@@ -28,45 +28,56 @@
  * #L%
  */
 
-package net.imagej.ops.statistics;
+package net.imagej.ops.statistics.firstorder.realtype;
 
-import static org.junit.Assert.assertEquals;
-import net.imagej.ops.AbstractOpTest;
-import net.imagej.ops.statistics.firstorder.FirstOrderStatOps.Mean;
-import net.imglib2.Cursor;
-import net.imglib2.img.Img;
-import net.imglib2.type.numeric.integer.ByteType;
+import net.imagej.ops.AbstractOutputFunction;
+import net.imagej.ops.Op;
+import net.imagej.ops.features.firstorder.FirstOrderFeatures.VarianceFeature;
+import net.imagej.ops.statistics.firstorder.FirstOrderStatIRTOps.VarianceIRT;
+import net.imagej.ops.statistics.firstorder.FirstOrderStatOps.Variance;
+import net.imglib2.type.numeric.RealType;
 import net.imglib2.type.numeric.real.DoubleType;
 
-import org.junit.Test;
+import org.scijava.Priority;
+import org.scijava.plugin.Plugin;
 
 /**
- * Tests {@link Mean}.
+ * Calculate {@link Variance} on {@link Iterable} of {@link RealType}
  * 
- * @author Curtis Rueden
+ * @author Christian Dietz
+ * @author Andreas Graumann
  */
-public class MeanTest extends AbstractOpTest {
+@Plugin(type = Op.class, name = Variance.NAME, label = Variance.LABEL, priority = Priority.FIRST_PRIORITY)
+public class DefaultVarianceIRT extends
+		AbstractOutputFunction<Iterable<? extends RealType<?>>, RealType<?>>
+		implements VarianceIRT, VarianceFeature {
 
-	@Test
-	public void testMean() {
-		final Img<ByteType> image = generateByteTestImg(true, 40, 50);
-		DoubleType mean = (DoubleType) ops.mean(DoubleType.class, image);
-
-		assertEquals(1.0 / 15.625, mean.get(), 0.0);
-
-		Cursor<ByteType> c = image.cursor();
-
-		// this time lets just make every value 100
-		while (c.hasNext()) {
-			c.fwd();
-			c.get().setReal(100.0);
-		}
-
-		mean = (DoubleType) ops.mean(DoubleType.class, image);
-
-		// the mean should be 100
-		assertEquals(100.0, mean.get(), 0.0);
-
+	@Override
+	public RealType<?> createOutput(Iterable<? extends RealType<?>> in) {
+		return new DoubleType();
 	}
 
+	@Override
+	protected RealType<?> safeCompute(Iterable<? extends RealType<?>> input,
+			RealType<?> output) {
+
+		double sum = 0;
+		double sumSqr = 0;
+		int n = 0;
+
+		for (final RealType<?> next : input) {
+			final double px = next.getRealDouble();
+			++n;
+			sum += px;
+			sumSqr += px * px;
+		}
+
+		output.setReal((sumSqr - (sum * sum / n)) / (n - 1));
+		return output;
+	}
+
+	@Override
+	public double getFeatureValue() {
+		return getOutput().getRealDouble();
+	}
 }

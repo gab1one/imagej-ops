@@ -1,6 +1,6 @@
 /*
  * #%L
- * ImageJ software for multidimensional image processing and analysis.
+ * ImageJ OPS: a framework for reusable algorithms.
  * %%
  * Copyright (C) 2014 Board of Regents of the University of
  * Wisconsin-Madison and University of Konstanz.
@@ -28,45 +28,21 @@
  * #L%
  */
 
-package net.imagej.ops.statistics;
+package net.imagej.ops.features;
 
-import static org.junit.Assert.assertEquals;
-import net.imagej.ops.AbstractOpTest;
-import net.imagej.ops.statistics.firstorder.FirstOrderStatOps.Mean;
-import net.imglib2.Cursor;
-import net.imglib2.img.Img;
-import net.imglib2.type.numeric.integer.ByteType;
-import net.imglib2.type.numeric.real.DoubleType;
+import java.util.Collection;
 
-import org.junit.Test;
+import net.imagej.ops.OutputFunction;
+import net.imglib2.Pair;
 
-/**
- * Tests {@link Mean}.
- * 
- * @author Curtis Rueden
- */
-public class MeanTest extends AbstractOpTest {
+import org.scijava.service.Service;
 
-	@Test
-	public void testMean() {
-		final Img<ByteType> image = generateByteTestImg(true, 40, 50);
-		DoubleType mean = (DoubleType) ops.mean(DoubleType.class, image);
+public interface FeatureService<I> extends Service {
 
-		assertEquals(1.0 / 15.625, mean.get(), 0.0);
+	OutputFunction<I, Collection<Pair<String, Double>>> compileFeatureSet(
+			final FeatureSetInfo ops, final Class<I> input);
 
-		Cursor<ByteType> c = image.cursor();
-
-		// this time lets just make every value 100
-		while (c.hasNext()) {
-			c.fwd();
-			c.get().setReal(100.0);
-		}
-
-		mean = (DoubleType) ops.mean(DoubleType.class, image);
-
-		// the mean should be 100
-		assertEquals(100.0, mean.get(), 0.0);
-
-	}
+	OutputFunction<I, Pair<String, Double>> compileFeature(
+			final Class<? extends Feature> featureClass, final Class<I> input);
 
 }

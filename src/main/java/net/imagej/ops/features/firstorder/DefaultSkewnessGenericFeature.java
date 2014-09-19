@@ -1,6 +1,6 @@
 /*
  * #%L
- * ImageJ software for multidimensional image processing and analysis.
+ * ImageJ OPS: a framework for reusable algorithms.
  * %%
  * Copyright (C) 2014 Board of Regents of the University of
  * Wisconsin-Madison and University of Konstanz.
@@ -28,45 +28,53 @@
  * #L%
  */
 
-package net.imagej.ops.statistics;
+package net.imagej.ops.features.firstorder;
 
-import static org.junit.Assert.assertEquals;
-import net.imagej.ops.AbstractOpTest;
-import net.imagej.ops.statistics.firstorder.FirstOrderStatOps.Mean;
-import net.imglib2.Cursor;
-import net.imglib2.img.Img;
-import net.imglib2.type.numeric.integer.ByteType;
-import net.imglib2.type.numeric.real.DoubleType;
+import net.imagej.ops.Op;
+import net.imagej.ops.features.FeatureService;
+import net.imagej.ops.features.firstorder.FirstOrderFeatures.Moment3AboutMeanFeature;
+import net.imagej.ops.features.firstorder.FirstOrderFeatures.SkewnessFeature;
+import net.imagej.ops.features.firstorder.FirstOrderFeatures.StdDeviationFeature;
+import net.imagej.ops.statistics.firstorder.FirstOrderStatOps.Skewness;
 
-import org.junit.Test;
+import org.scijava.ItemIO;
+import org.scijava.Priority;
+import org.scijava.plugin.Parameter;
+import org.scijava.plugin.Plugin;
 
 /**
- * Tests {@link Mean}.
+ * Generic implementation of {@link Skewness}. Use {@link FeatureService} to
+ * compile this {@link Op}.
  * 
- * @author Curtis Rueden
+ * @author Christian Dietz
+ * @author Andreas Graumann
  */
-public class MeanTest extends AbstractOpTest {
+@Plugin(type = Op.class, label = Skewness.LABEL, name = Skewness.NAME, priority = Priority.VERY_HIGH_PRIORITY)
+public class DefaultSkewnessGenericFeature implements SkewnessFeature {
 
-	@Test
-	public void testMean() {
-		final Img<ByteType> image = generateByteTestImg(true, 40, 50);
-		DoubleType mean = (DoubleType) ops.mean(DoubleType.class, image);
+	@Parameter
+	private Moment3AboutMeanFeature moment3;
 
-		assertEquals(1.0 / 15.625, mean.get(), 0.0);
+	@Parameter
+	private StdDeviationFeature stdDev;
 
-		Cursor<ByteType> c = image.cursor();
+	@Parameter(type = ItemIO.OUTPUT)
+	private double out;
 
-		// this time lets just make every value 100
-		while (c.hasNext()) {
-			c.fwd();
-			c.get().setReal(100.0);
+	@Override
+	public void run() {
+		final double moment3 = this.moment3.getFeatureValue();
+		final double std = this.stdDev.getFeatureValue();
+
+		out = Double.NaN;
+		if (std != 0) {
+			out = ((moment3) / (std * std * std));
 		}
+	}
 
-		mean = (DoubleType) ops.mean(DoubleType.class, image);
-
-		// the mean should be 100
-		assertEquals(100.0, mean.get(), 0.0);
-
+	@Override
+	public double getFeatureValue() {
+		return out;
 	}
 
 }

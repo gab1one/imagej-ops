@@ -1,6 +1,6 @@
 /*
  * #%L
- * ImageJ software for multidimensional image processing and analysis.
+ * ImageJ OPS: a framework for reusable algorithms.
  * %%
  * Copyright (C) 2014 Board of Regents of the University of
  * Wisconsin-Madison and University of Konstanz.
@@ -28,45 +28,50 @@
  * #L%
  */
 
-package net.imagej.ops.statistics;
+package net.imagej.ops.statistics.firstorder.realtype;
 
-import static org.junit.Assert.assertEquals;
-import net.imagej.ops.AbstractOpTest;
-import net.imagej.ops.statistics.firstorder.FirstOrderStatOps.Mean;
-import net.imglib2.Cursor;
-import net.imglib2.img.Img;
-import net.imglib2.type.numeric.integer.ByteType;
-import net.imglib2.type.numeric.real.DoubleType;
+import java.util.Iterator;
 
-import org.junit.Test;
+import net.imagej.ops.statistics.firstorder.FirstOrderStatOps.MinMax;
+import net.imglib2.type.numeric.RealType;
+
+import org.scijava.ItemIO;
+import org.scijava.plugin.Parameter;
+import org.scijava.plugin.Plugin;
 
 /**
- * Tests {@link Mean}.
+ * Calculates the minimum and maximum value of an {@link Iterable} of type
+ * {@link RealType}
  * 
- * @author Curtis Rueden
+ * @author Martin Horn
  */
-public class MeanTest extends AbstractOpTest {
+@Plugin(type = MinMax.class, name = MinMax.NAME)
+public class DefaultMinMaxIRT<T extends RealType<T>> implements MinMax {
 
-	@Test
-	public void testMean() {
-		final Img<ByteType> image = generateByteTestImg(true, 40, 50);
-		DoubleType mean = (DoubleType) ops.mean(DoubleType.class, image);
+	@Parameter(type = ItemIO.INPUT)
+	private Iterable<T> img;
 
-		assertEquals(1.0 / 15.625, mean.get(), 0.0);
+	@Parameter(type = ItemIO.OUTPUT)
+	private T min;
 
-		Cursor<ByteType> c = image.cursor();
+	@Parameter(type = ItemIO.OUTPUT)
+	private T max;
 
-		// this time lets just make every value 100
-		while (c.hasNext()) {
-			c.fwd();
-			c.get().setReal(100.0);
+	@Override
+	public void run() {
+		min = img.iterator().next().createVariable();
+		max = min.copy();
+
+		min.setReal(min.getMaxValue());
+		max.setReal(max.getMinValue());
+
+		final Iterator<T> it = img.iterator();
+		while (it.hasNext()) {
+			final T i = it.next();
+			if (min.compareTo(i) > 0)
+				min.set(i);
+			if (max.compareTo(i) < 0)
+				max.set(i);
 		}
-
-		mean = (DoubleType) ops.mean(DoubleType.class, image);
-
-		// the mean should be 100
-		assertEquals(100.0, mean.get(), 0.0);
-
 	}
-
 }

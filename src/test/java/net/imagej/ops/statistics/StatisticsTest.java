@@ -31,6 +31,8 @@
 package net.imagej.ops.statistics;
 
 import net.imagej.ops.AbstractOpTest;
+import net.imagej.ops.statistics.firstorder.FirstOrderStatOps.Max;
+import net.imagej.ops.statistics.firstorder.FirstOrderStatOps.Min;
 import net.imglib2.img.array.ArrayImg;
 import net.imglib2.img.basictypeaccess.array.FloatArray;
 import net.imglib2.type.numeric.real.DoubleType;
@@ -41,13 +43,11 @@ import org.junit.Before;
 import org.junit.Test;
 
 /**
- * Tests statistics operations using the following general pattern. 
+ * Tests statistics operations using the following general pattern.
  * 
- * 1. Generate a random test image. 
- * 2. Get a reference to the raw data pointer. 
- * 3. Calculate the statistic by directly using the raw data. 
- * 4. Calculate the statistic by calling the op. 
- * 5. Assert that the two values are the same.
+ * 1. Generate a random test image. 2. Get a reference to the raw data pointer.
+ * 3. Calculate the statistic by directly using the raw data. 4. Calculate the
+ * statistic by calling the op. 5. Assert that the two values are the same.
  * 
  * @author bnorthan
  */
@@ -78,23 +78,25 @@ public class StatisticsTest extends AbstractOpTest {
 	@Test
 	public void MinMaxTest() {
 		float min1 = Float.MAX_VALUE;
-		float max1 = Float.MIN_VALUE;
+		float max1 = -Float.MAX_VALUE;
 
 		// loop through the array calculating min and max
 		for (int i = 0; i < arraySize; i++) {
-			if (array[i] < min1) min1 = array[i];
-			if (array[i] > max1) max1 = array[i];
+			if (array[i] < min1)
+				min1 = array[i];
+			if (array[i] > max1)
+				max1 = array[i];
 		}
 
 		// calculate min using ops
 		FloatType min2 = new FloatType();
 		min2.setReal(Float.MAX_VALUE);
-		ops.run("min", min2, img);
+		ops.run(Min.class, min2, img);
 
 		// calculate max using ops
 		FloatType max2 = new FloatType();
-		max2.setReal(Float.MIN_VALUE);
-		ops.run("max", max2, img);
+		max2.setReal(-Float.MAX_VALUE);
+		ops.run(Max.class, max2, img);
 
 		// check to see if everything matches
 		Assert.assertEquals(min1, min2.getRealFloat(), delta);

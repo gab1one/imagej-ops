@@ -40,6 +40,7 @@ import net.imglib2.img.Img;
 import net.imglib2.img.array.ArrayImgFactory;
 import net.imglib2.type.numeric.integer.ByteType;
 import net.imglib2.type.numeric.integer.ShortType;
+import net.imglib2.type.numeric.real.DoubleType;
 
 import org.junit.Test;
 
@@ -94,9 +95,9 @@ public class ConvolveTest extends AbstractOpTest {
 		placeSphereInCenter(kernel);
 
 		// create variables to hold the image sums
-		ShortType inSum = new ShortType();
-		ShortType kernelSum = new ShortType();
-		ShortType outSum = new ShortType();
+		DoubleType inSum = new DoubleType();
+		DoubleType kernelSum = new DoubleType();
+		DoubleType outSum = new DoubleType();
 
 		// calculate sum of input and kernel
 		ops.run("sum", inSum, in);

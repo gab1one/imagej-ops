@@ -35,7 +35,7 @@ import java.util.List;
 import net.imagej.ops.Op;
 import net.imagej.ops.OpService;
 import net.imagej.ops.Ops;
-import net.imagej.ops.misc.MinMax;
+import net.imagej.ops.statistics.firstorder.FirstOrderStatOps.MinMax;
 import net.imglib2.IterableInterval;
 import net.imglib2.histogram.Histogram1d;
 import net.imglib2.histogram.Real1dBinMapper;
@@ -67,9 +67,8 @@ public class HistogramCreate<T extends RealType<T>> implements Ops.Histogram {
 	public void run() {
 		@SuppressWarnings("unchecked")
 		final List<T> res = (List<T>) ops.run(MinMax.class, in);
-		out =
-			new Histogram1d<T>(new Real1dBinMapper<T>(res.get(0).getRealDouble(), res
-				.get(1).getRealDouble(), numBins, false));
+		out = new Histogram1d<T>(new Real1dBinMapper<T>(res.get(0)
+				.getRealDouble(), res.get(1).getRealDouble(), numBins, false));
 
 	}
 }

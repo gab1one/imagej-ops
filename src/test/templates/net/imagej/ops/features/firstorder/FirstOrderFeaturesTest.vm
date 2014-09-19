@@ -28,45 +28,48 @@
  * #L%
  */
 
-package net.imagej.ops.statistics;
+package net.imagej.ops.features.firstorder;
 
-import static org.junit.Assert.assertEquals;
-import net.imagej.ops.AbstractOpTest;
-import net.imagej.ops.statistics.firstorder.FirstOrderStatOps.Mean;
-import net.imglib2.Cursor;
+import static org.junit.Assert.*;
+
+import java.util.Collection;
+
+import net.imagej.ops.OutputFunction;
+import net.imglib2.Pair;
 import net.imglib2.img.Img;
-import net.imglib2.type.numeric.integer.ByteType;
-import net.imglib2.type.numeric.real.DoubleType;
 
 import org.junit.Test;
+import net.imagej.ops.features.firstorder.FirstOrderFeatures;
+import net.imagej.ops.features.AbstractFeatureTest;
 
 /**
- * Tests {@link Mean}.
- * 
- * @author Curtis Rueden
+ * Testing implementations of {@link FirstOrderFeaturesTest}
+ 
+ * @author Christian Dietz (University of Konstanz)
  */
-public class MeanTest extends AbstractOpTest {
+public class FirstOrderFeaturesTest extends AbstractFeatureTest {
 
+#foreach ($op in $ops)
+
+	/**
+	 * Testing {@link Feature} implementation of {@link ${op.iface}}
+	 */
 	@Test
-	public void testMean() {
-		final Img<ByteType> image = generateByteTestImg(true, 40, 50);
-		DoubleType mean = (DoubleType) ops.mean(DoubleType.class, image);
+	public void ${op.iface}FeatureTest() {
+		
+	   OutputFunction<Img, Collection<Pair<String, Double>>> compiled = fs
+				.compileFeature(FirstOrderFeatures.${op.iface}Feature.class, Img.class);
 
-		assertEquals(1.0 / 15.625, mean.get(), 0.0);
+		assertEquals(${op.empty}, compiled.compute(empty).iterator().next().getB(),
+				SMALL_DELTA);
 
-		Cursor<ByteType> c = image.cursor();
+		assertEquals(${op.random}, compiled.compute(random).iterator().next().getB(),
+				SMALL_DELTA);
 
-		// this time lets just make every value 100
-		while (c.hasNext()) {
-			c.fwd();
-			c.get().setReal(100.0);
-		}
-
-		mean = (DoubleType) ops.mean(DoubleType.class, image);
-
-		// the mean should be 100
-		assertEquals(100.0, mean.get(), 0.0);
-
+		assertEquals(${op.constant}, compiled.compute(constant).iterator().next().getB(),
+				SMALL_DELTA);
+		
 	}
+#end
 
 }
