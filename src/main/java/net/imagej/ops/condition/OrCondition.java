@@ -5,8 +5,8 @@ import net.imagej.ops.Op;
 import org.scijava.plugin.Parameter;
 import org.scijava.plugin.Plugin;
 
-@Plugin(type = Op.class, name = And.NAME)
-public class OrCondition<T> extends AbstractCondition<T> implements And {
+@Plugin(type = Op.class, name = Or.NAME)
+public class OrCondition<T> extends AbstractCondition<T> implements Or {
 
 	@Parameter
 	private Condition<T> c1;

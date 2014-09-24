@@ -15,8 +15,10 @@ public class XorCondition<T> extends AbstractCondition<T> implements And {
 	private Condition<T> c2;
 
 	@Override
-	public boolean isTrue(T val) {
-		return c1.isTrue(val)^c1.isTrue(val);
+	public boolean isTrue(T val) {		
+		boolean one = c1.isTrue(val);
+		boolean two = c2.isTrue(val);
+		return (one && !two) || (!one && two);
 	}
 
 }

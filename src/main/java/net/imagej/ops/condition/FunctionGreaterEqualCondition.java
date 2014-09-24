@@ -5,8 +5,8 @@ import net.imagej.ops.Op;
 import org.scijava.plugin.Parameter;
 import org.scijava.plugin.Plugin;
 
-@Plugin(type = Op.class, name = "greater")
-public class FunctionGreaterCondition<T extends Comparable<T>> extends AbstractCondition<T> {
+@Plugin(type = Op.class, name = "greater_equal")
+public class FunctionGreaterEqualCondition<T extends Comparable<T>> extends AbstractCondition<T> {
 
 	@Parameter
 	T o;
@@ -20,7 +20,7 @@ public class FunctionGreaterCondition<T extends Comparable<T>> extends AbstractC
 		//This could be confusing. Should this method return false if val is NaN?
 		
 		
-		return result > 0;
+		return result >= 0;
 	}
 
 }
