@@ -6,25 +6,27 @@ import org.scijava.plugin.Parameter;
 import org.scijava.plugin.Plugin;
 
 @Plugin(type = Op.class, name = "range")
-public class RangeCondition extends AbstractCondition<Object> {
+public class RangeCondition<T extends Comparable<T>> extends AbstractCondition<T> {
 
 	@Parameter
-	private long first; 
-	
+	T first;
 	@Parameter
-	private long last;
-	
+	T last;
 	@Parameter
-	private long step;
-	
+	T step;
+
 	@Override
-	public boolean isTrue(Object val) {
-		if((Long)val < first){return false;}
-		if((Long)val > last){return false;}
+	public boolean isTrue(T val) {
+		if(val.compareTo(first) < 0 ){return false;}
 		
-		return ((Long)val - first) % step == 0;
+		if(val.compareTo(last) > 0 ){return false;}
 		
-		 
+		
+		//TODO:
+		//Double.NaN.compareTo(o) always returns 1 but Double.NaN > o returns false. 
+		//This could be confusing. Should this method return false if val is NaN?
+		
+		return (true) ;
 	}
 
 }

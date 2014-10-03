@@ -14,13 +14,12 @@ public class RangeTest extends AbstractOpTest {
     public void testRange()
     {
          
-        Context ctx = new Context();
-        OpService op = ctx.service(OpService.class);
          
-        Boolean result = (Boolean) (op).run("range", 0, 20, 2);
+        Boolean result = (Boolean) ops.run(RangeCondition.class, null, 0, 20, 2);
         assertSame(result, true);
-         
+         /*
         Boolean result1 = (Boolean) (op).run("range", 20, 0, 2);
         assertSame(result1, false);
+        */
     }
 }

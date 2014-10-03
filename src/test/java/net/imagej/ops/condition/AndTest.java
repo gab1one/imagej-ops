@@ -1,26 +1,28 @@
 package net.imagej.ops.condition;
  
 import static org.junit.Assert.assertSame;
- 
-import org.junit.Test;
-import org.scijava.Context;
- 
 import net.imagej.ops.AbstractOpTest;
-import net.imagej.ops.OpService;
+
+import org.junit.Test;
  
 public class AndTest extends AbstractOpTest {
  
     @Test
-    public void AndTest()
+    public void testAnd()
     {
-         
-        Context ctx = new Context();
-        OpService op = ctx.service(OpService.class);
-         
-        Boolean result = (Boolean) (op).run("and", 5.0, 4.0);
-        assertSame(result, false);
-         
-        Boolean result2 = (Boolean) (op).run("and", 5.0, 5.0);
+    	Condition<?> c1 =  (Condition<?>) ops.op(FunctionGreaterCondition.class, Double.class, 3.0);
+        Condition<?> c2 =  (Condition<?>) ops.op(FunctionLessCondition.class, Double.class, 6.0);
+
+        Boolean result = (Boolean) ops.run(AndCondition.class, 5.0, c1,c2);        
         assertSame(result, true);
+         
+        Boolean result2 = (Boolean) ops.run(AndCondition.class, 2.0, c1,c2);        
+        assertSame(result2, false);
+        
+        Boolean result3 = (Boolean) ops.run(AndCondition.class, 7.0, c1,c2);        
+        assertSame(result3, false);
+        
+        Boolean result4 = (Boolean) ops.run(AndCondition.class, Double.NaN, c1,c2);        
+        assertSame(result4, false);
     }
 }

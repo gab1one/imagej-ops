@@ -14,13 +14,11 @@ public class BooleanTest extends AbstractOpTest {
     public void testBoolean()
     {
          
-        Context ctx = new Context();
-        OpService op = ctx.service(OpService.class);
          
-        Boolean result = (Boolean) (op).run("and", 5.0, 4.0);
-        assertSame(result, false);
-         
-        Boolean result1 = (Boolean) (op).run("and", 5.0, 5.0);
-        assertSame(result1, true);
+        Boolean result = (Boolean) ops.run(BooleanCondition.class, true);
+        assertSame(result, true);
+        
+        Boolean result1 = (Boolean) ops.run(BooleanCondition.class, false);
+        assertSame(result1, false);
     }
 }
