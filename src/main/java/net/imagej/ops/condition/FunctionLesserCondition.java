@@ -6,7 +6,7 @@ import org.scijava.plugin.Parameter;
 import org.scijava.plugin.Plugin;
 
 @Plugin(type = Op.class, name = "less")
-public class FunctionLessEqualCondition<T extends Comparable<T>> extends AbstractCondition<T> {
+public class FunctionLesserCondition<T extends Comparable<T>> extends AbstractCondition<T> {
 
 	@Parameter
 	T o;
@@ -15,7 +15,7 @@ public class FunctionLessEqualCondition<T extends Comparable<T>> extends Abstrac
 	public boolean isTrue(T val) {
 		int result = val.compareTo(o);
 		
-		return result <= 0;
+		return result < 0;
 	}
 
 }
