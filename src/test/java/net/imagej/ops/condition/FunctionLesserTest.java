@@ -14,10 +14,10 @@ public class FunctionLesserTest extends AbstractOpTest {
     public void testFunctionLesser()
     {
          
-    	 Boolean result = (Boolean) ops.run(FunctionLessCondition.class, 5.0, 3.0);
+    	 Boolean result = (Boolean) ops.run(FunctionLesserCondition.class, 5.0, 3.0);
          assertSame(result, false);
          
-         Boolean result2 = (Boolean) ops.run(FunctionLessCondition.class, 5.0, 6.0);
+         Boolean result2 = (Boolean) ops.run(FunctionLesserCondition.class, 5.0, 6.0);
          assertSame(result2, true);
     }
 }

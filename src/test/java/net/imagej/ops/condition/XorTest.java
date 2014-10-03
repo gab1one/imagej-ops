@@ -14,7 +14,7 @@ public class XorTest extends AbstractOpTest {
     public void testXor()
     {
       	Condition<?> c1 =  (Condition<?>) ops.op(FunctionGreaterCondition.class, Double.class, 3.0);
-        Condition<?> c2 =  (Condition<?>) ops.op(FunctionLessCondition.class, Double.class, 6.0);
+        Condition<?> c2 =  (Condition<?>) ops.op(FunctionLesserCondition.class, Double.class, 6.0);
 
         Boolean result = (Boolean) ops.run(XorCondition.class, 5.0, c1,c2);        
         assertSame(result, false);
