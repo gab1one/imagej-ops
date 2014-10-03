@@ -19,7 +19,7 @@ public class IntersectionTest<T> extends AbstractOpTest {
     	ArrayList<Condition<T>> condition = new ArrayList<Condition<T>>();
          
     	Condition<?> c1 =  (Condition<?>) ops.op(FunctionGreaterCondition.class, 5.0, 3.0);
-    	Condition<?> c2 =  (Condition<?>) ops.op(FunctionLessCondition.class, 5.0, 6.0);
+    	Condition<?> c2 =  (Condition<?>) ops.op(FunctionLesserCondition.class, 5.0, 6.0);
 
         condition.add((Condition<T>) c1);
         condition.add((Condition<T>) c2);

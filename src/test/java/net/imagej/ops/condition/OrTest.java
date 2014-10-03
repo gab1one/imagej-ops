@@ -16,7 +16,7 @@ public class OrTest extends AbstractOpTest {
     {
          
     	Condition<?> c1 =  (Condition<?>) ops.op(FunctionGreaterCondition.class, Double.class, 3.0);
-        Condition<?> c2 =  (Condition<?>) ops.op(FunctionLessCondition.class, Double.class, 6.0);
+        Condition<?> c2 =  (Condition<?>) ops.op(FunctionLesserCondition.class, Double.class, 6.0);
     	Condition<?> c3 =  (Condition<?>) ops.op(EqualsCondition.class, Double.class, 13.0);
 
         Boolean result = (Boolean) ops.run(OrCondition.class, 5.0, c1,c2);        
