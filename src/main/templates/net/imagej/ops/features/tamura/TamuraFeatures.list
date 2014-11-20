@@ -1,0 +1,11 @@
+[TamuraFeatures.java]
+ops = ```
+[
+  {name: tamuragranularity, iface: TamuraGranularity},
+  {name: tamuracontrast, iface: TamuraContrast},
+  {name: tamurakurtosisofdirectionality, iface: TamuraKurtosisOfDirectionality},
+  {name: tamurastddevdirectionality, iface: TamuraStdDevDirectionality},
+  {name: tamuramaxdirectionality, iface: TamuraMaxDirectionality},
+  {name: tamuraskewness, iface: TamuraSkewness}
+]
+```
