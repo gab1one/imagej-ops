@@ -70,7 +70,9 @@ public final class TamuraOps {
 	 */
 	public interface $op.iface extends Op {
 		String NAME = "$op.name";
-#if ($op.aliases)
+		String LABEL = "$op.iface";
+
+	#if ($op.aliases)
 		String ALIASES = "$op.aliases";
 #end
 	}

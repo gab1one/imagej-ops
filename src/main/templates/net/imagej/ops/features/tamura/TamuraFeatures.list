@@ -6,6 +6,7 @@ ops = ```
   {name: tamurakurtosisofdirectionality, iface: TamuraKurtosisOfDirectionality},
   {name: tamurastddevdirectionality, iface: TamuraStdDevDirectionality},
   {name: tamuramaxdirectionality, iface: TamuraMaxDirectionality},
-  {name: tamuraskewness, iface: TamuraSkewness}
+  {name: tamuraskewness, iface: TamuraSkewness},
+  {name: tamuradirectionality, iface: TamuraDirectionality}
 ]
 ```
