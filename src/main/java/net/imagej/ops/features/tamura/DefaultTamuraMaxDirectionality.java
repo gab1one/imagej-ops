@@ -1,29 +1,41 @@
+
 package net.imagej.ops.features.tamura;
 
-import net.imagej.ops.AbstractOutputFunction;
 import net.imagej.ops.Op;
+import net.imagej.ops.features.tamura.helper.DefaultTamuraMaxDirectionalityHelper;
 import net.imagej.ops.statistics.tamura.TamuraOps;
-import net.imglib2.IterableInterval;
-import net.imglib2.type.numeric.RealType;
+
+import org.scijava.ItemIO;
 import org.scijava.Priority;
+import org.scijava.plugin.Parameter;
 import org.scijava.plugin.Plugin;
 
-
-
 /**
- * Calculates the {@link net.imagej.ops.statistics.tamura.TamuraOps.TamuraMaxDirectionality} of a {@link net.imglib2.IterableInterval }
+ * Calculates the
+ * {@link net.imagej.ops.statistics.tamura.TamuraOps.TamuraMaxDirectionality} of
+ * a {@link net.imglib2.IterableInterval }
  */
 
-@Plugin(type = Op.class, label = TamuraOps.TamuraMaxDirectionality.LABEL, name = TamuraOps.TamuraMaxDirectionality.NAME, priority = Priority.VERY_HIGH_PRIORITY)
-public class DefaultTamuraMaxDirectionality
-        implements TamuraFeatures.TamuraGranularityFeature {
+@Plugin(type = Op.class, label = TamuraOps.TamuraMaxDirectionality.LABEL,
+	name = TamuraOps.TamuraMaxDirectionality.NAME,
+	priority = Priority.VERY_HIGH_PRIORITY)
+public class DefaultTamuraMaxDirectionality implements
+	TamuraFeatures.TamuraGranularityFeature
+{
 
-    @Override public double getFeatureValue() {
-        return 0;
-    }
+	@Parameter(type = ItemIO.INPUT)
+	private DefaultTamuraMaxDirectionalityHelper maxDirectionalityHelpery;
 
-    @Override public void run() {
+	@Parameter(type = ItemIO.OUTPUT)
+	private double out;
 
-    }
+	@Override
+	public void run() {
+		out = maxDirectionalityHelpery.getFeatureValue();
+	}
+
+	@Override
+	public double getFeatureValue() {
+		return out;
+	}
 }
-

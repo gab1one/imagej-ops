@@ -16,9 +16,9 @@ import org.scijava.plugin.Plugin;
  * Helper Feature for
  * {@link net.imagej.ops.features.tamura.DefaultTamuraKurtosisOfDirectionality}
  */
-@Plugin(type = Op.class, name = "defaulttamurakurtosisofdirectionality",
+@Plugin(type = Op.class, name = "defaulttamuramaxdirectionality",
 	priority = Priority.VERY_HIGH_PRIORITY)
-public class DefaultTamuraKurtosisOfDirectionalityHelper implements Feature {
+public class DefaultTamuraSkewnessDirectionalityHelper implements Feature {
 
 	@Parameter(type = ItemIO.INPUT)
 	private TamuraFeatures.TamuraDirectionalityFeature directionality;
@@ -29,11 +29,10 @@ public class DefaultTamuraKurtosisOfDirectionalityHelper implements Feature {
 	@Parameter(type = ItemIO.OUTPUT)
 	private double out;
 
-
 	@Override
 	public void run() {
 		out =
-			(Double) ops.run(FirstOrderFeatures.KurtosisFeature.class, directionality
+			(Double) ops.run(FirstOrderFeatures.SkewnessFeature.class, directionality
 				.getFeatureValue());
 	}
 
