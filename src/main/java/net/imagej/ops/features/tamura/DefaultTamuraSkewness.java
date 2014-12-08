@@ -2,7 +2,8 @@
 package net.imagej.ops.features.tamura;
 
 import net.imagej.ops.Op;
-import net.imagej.ops.features.tamura.helper.DefaultTamuraSkewnessDirectionalityHelper;
+import net.imagej.ops.OpService;
+import net.imagej.ops.features.firstorder.FirstOrderFeatures;
 import net.imagej.ops.statistics.tamura.TamuraOps;
 
 import org.scijava.ItemIO;
@@ -23,14 +24,19 @@ public class DefaultTamuraSkewness implements
 {
 
 	@Parameter(type = ItemIO.INPUT)
-	private DefaultTamuraSkewnessDirectionalityHelper skewnessDirectionalityHelper;
+	private TamuraFeatures.TamuraDirectionalityFeature directionality;
+
+	@Parameter(type = ItemIO.INPUT)
+	private OpService ops;
 
 	@Parameter(type = ItemIO.OUTPUT)
 	private double out;
 
 	@Override
 	public void run() {
-		out = skewnessDirectionalityHelper.getFeatureValue();
+		out =
+			(Double) ops.run(FirstOrderFeatures.SkewnessFeature.class, directionality
+				.getFeatureValue());
 	}
 
 	@Override

@@ -2,7 +2,8 @@
 package net.imagej.ops.features.tamura;
 
 import net.imagej.ops.Op;
-import net.imagej.ops.features.tamura.helper.DefaultTamuraMaxDirectionalityHelper;
+import net.imagej.ops.OpService;
+import net.imagej.ops.features.firstorder.FirstOrderFeatures;
 import net.imagej.ops.statistics.tamura.TamuraOps;
 
 import org.scijava.ItemIO;
@@ -24,14 +25,19 @@ public class DefaultTamuraMaxDirectionality implements
 {
 
 	@Parameter(type = ItemIO.INPUT)
-	private DefaultTamuraMaxDirectionalityHelper maxDirectionalityHelpery;
+	private OpService ops;
+
+	@Parameter(type = ItemIO.INPUT)
+	private TamuraFeatures.TamuraDirectionalityFeature directionality;
 
 	@Parameter(type = ItemIO.OUTPUT)
 	private double out;
 
 	@Override
 	public void run() {
-		out = maxDirectionalityHelpery.getFeatureValue();
+		out =
+			(Double) ops.run(FirstOrderFeatures.MaxFeature.class, directionality
+				.getFeatureValue());
 	}
 
 	@Override
