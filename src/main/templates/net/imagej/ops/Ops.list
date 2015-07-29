@@ -76,6 +76,9 @@ namespaces = ```
 		[name: "sumvariance",        iface: "SumVariance"],
 		[name: "maxprobability",     iface: "MaxProbability"],
 		[name: "texturehomogeneity", iface: "TextureHomogeneity"]
+=======
+		[name: "phaseCorrelate",     iface: "PhaseCorrelate"]
+>>>>>>> initial setup of PC op
 	]],
 	[name: "image",      iface: "Image", ops: [
 		[name: "ascii",              iface: "ASCII"],

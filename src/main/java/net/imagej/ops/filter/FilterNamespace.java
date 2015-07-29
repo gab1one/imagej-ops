@@ -1188,6 +1188,16 @@ public class FilterNamespace extends AbstractNamespace {
 		return result;
 	}
 
+	/** Executes the "phase correlation" operation on the given arguments. */
+	@SuppressWarnings("unchecked")
+	@OpMethod(op = net.imagej.ops.filter.phasecorrelation.ImgPhaseCorrelationOp.class)
+	public <T extends RealType<T>> RandomAccessibleInterval<T> phaseCorrelate(
+		final RandomAccessibleInterval<T> in1, final RandomAccessibleInterval<T> in2 )
+	{
+		return (RandomAccessibleInterval<T>) ops().run(net.imagej.ops.filter.phasecorrelation.ImgPhaseCorrelationOp.class, 
+				in1,in2);
+	}
+	
 	// -- Namespace methods --
 
 	@Override
