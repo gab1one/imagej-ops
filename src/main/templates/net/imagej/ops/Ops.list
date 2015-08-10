@@ -50,7 +50,7 @@ namespaces = ```
 		[name: "gauss",              iface: "Gauss",               aliases: ["smooth"]],
 		[name: "dog",                iface: "DoG",                 aliases: ["differenceOfGaussian"]],
 		[name: "ifft",               iface: "IFFT"],
-		[name: "phaseCorrelate",     iface: "PhaseCorrelate"],
+		[name: "phaseCorrelate",     iface: "PhaseCorrelate"]
 	]],
 	[name: "image",      iface: "Image", ops: [
 		[name: "ascii",              iface: "ASCII"],
