@@ -401,8 +401,8 @@ public class ImageNamespace extends AbstractNamespace {
 	
 	@OpMethod(op = net.imagej.ops.image.normalize.NormalizeComplexRAI.class)
 	public
-		<T extends ComplexType<T>> Img<T> normalize(
-			final Img<T> in1, final float in2)
+		<T extends ComplexType<T>> RandomAccessibleInterval<T> normalize(
+			final RandomAccessibleInterval<T> in1, final float in2)
 	{
 		@SuppressWarnings("unchecked")
 		final Img<T> result =
@@ -414,14 +414,14 @@ public class ImageNamespace extends AbstractNamespace {
 	
 	@OpMethod(op = net.imagej.ops.image.normalize.NormalizeConjugateComplexRAI.class)
 	public
-		<T extends ComplexType<T>> Img<T> normalizeConjugate(
-			final Img<T> in1, final float in2)
+		<T extends ComplexType<T>> RandomAccessibleInterval<T> normalizeConjugate(
+			final RandomAccessibleInterval<T> interval1, final float in2)
 	{
 		@SuppressWarnings("unchecked")
 		final Img<T> result =
 			(Img<T>) ops()
 				.run(net.imagej.ops.image.normalize.NormalizeConjugateComplexRAI.class,
-					in1, in2);
+					interval1, in2);
 		return result;
 	}
 
