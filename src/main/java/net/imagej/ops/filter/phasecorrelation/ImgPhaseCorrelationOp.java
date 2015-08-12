@@ -14,6 +14,7 @@ import net.imglib2.RandomAccessible;
 import net.imglib2.RandomAccessibleInterval;
 import net.imglib2.img.Img;
 import net.imglib2.type.numeric.RealType;
+import net.imglib2.view.Views;
 
 @Plugin(type=Ops.Filter.PhaseCorrelate.class, name=Ops.Filter.PhaseCorrelate.NAME)
 public class ImgPhaseCorrelationOp<T extends RealType<T>> extends AbstractFunctionOp<RandomAccessibleInterval<T>, RandomAccessibleInterval<T>> implements PhaseCorrelate {
@@ -33,20 +34,26 @@ public class ImgPhaseCorrelationOp<T extends RealType<T>> extends AbstractFuncti
 	@Override
 	public RandomAccessibleInterval<T> compute(RandomAccessibleInterval<T> input) {
 				
-		// TODO compute FFT, (correlate, multiply => normalizeAndConjugate),
 		// calculate inverse FFT
-		ops.filter().fft(input);
-		ops.filter().fft(interval1);
+		RandomAccessibleInterval<T> fft1 = (RandomAccessibleInterval<T>) ops.filter().fft(input);
+		RandomAccessibleInterval<T> fft2 = (RandomAccessibleInterval<T>) ops.filter().fft(interval1);
 		
 		// call normalizeComplexImgOp 
-		ops.image().normalize(input, normalizationThreshold);
-		ops.image().normalizeConjugate((Img<T>) interval1, normalizationThreshold);
-				
+		RandomAccessibleInterval<T> img1 = ops.image().normalize(fft1, normalizationThreshold);
+		RandomAccessibleInterval<T> img2 = ops.image().normalizeConjugate(fft2, normalizationThreshold);
 		
-		// maybe create new output instance instead of using interval1 as output
-		ops.filter().ifft(interval1, input);
+		Cursor<T> fft1cursor = Views.flatIterable(fft1).cursor();
+		Cursor<T> fft2cursor = Views.flatIterable(fft2).cursor();
 		
-		return interval1; // return result
+		
+		while (fft1cursor.hasNext()) {
+            fft1cursor.next().mul(fft2cursor.next());
+        }
+		
+		// maybe create new output instance instead of using img2 as output
+		ops.filter().ifft(img2, img1);
+		
+		return img2; // return result
 	}
 	
 	
