@@ -8,21 +8,22 @@ import net.imagej.ops.AbstractFunctionOp;
 import net.imagej.ops.Ops;
 import net.imagej.ops.Ops.Image.ComplexNormalizeConjugate;
 import net.imglib2.Cursor;
+import net.imglib2.RandomAccessibleInterval;
 import net.imglib2.img.Img;
 import net.imglib2.type.numeric.ComplexType;
+import net.imglib2.view.Views;
 
-//TODO: change type from Img to RandomAccessibleInterval if possible
 
 @Plugin(type=Ops.Image.ComplexNormalizeConjugate.class, name=Ops.Image.ComplexNormalizeConjugate.NAME)
-public class NormalizeConjugateComplexImg<T extends ComplexType<T>> extends AbstractFunctionOp<Img<T>, Img<T>> implements ComplexNormalizeConjugate {
+public class NormalizeConjugateComplexRAI<T extends ComplexType<T>> extends AbstractFunctionOp<RandomAccessibleInterval<T>, RandomAccessibleInterval<T>> implements ComplexNormalizeConjugate {
 
 	@Parameter(type=ItemIO.INPUT)
 	private float normalizationThreshold;
 	
 	@Override
-	public Img<T> compute(Img<T> input) {
+	public RandomAccessibleInterval<T> compute(RandomAccessibleInterval<T> input) {
 		
-		Cursor<T> cursor = input.cursor();
+		Cursor<T> cursor = Views.flatIterable(input).cursor();
 		
 		while(cursor.hasNext()) {
 			cursor.next();
