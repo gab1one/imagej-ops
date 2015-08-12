@@ -8,9 +8,7 @@ import net.imagej.ops.AbstractFunctionOp;
 import net.imagej.ops.Ops;
 import net.imagej.ops.Ops.Image.ComplexNormalize;
 import net.imglib2.Cursor;
-import net.imglib2.IterableInterval;
 import net.imglib2.RandomAccessibleInterval;
-import net.imglib2.img.Img;
 import net.imglib2.type.numeric.ComplexType;
 import net.imglib2.view.Views;
 
