@@ -9,7 +9,6 @@ import net.imagej.ops.Ops;
 import net.imagej.ops.Ops.Image.ComplexNormalizeConjugate;
 import net.imglib2.Cursor;
 import net.imglib2.RandomAccessibleInterval;
-import net.imglib2.img.Img;
 import net.imglib2.type.numeric.ComplexType;
 import net.imglib2.view.Views;
 
