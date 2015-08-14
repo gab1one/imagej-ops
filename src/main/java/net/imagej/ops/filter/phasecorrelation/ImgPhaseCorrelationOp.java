@@ -15,15 +15,17 @@ import net.imglib2.Cursor;
 import net.imglib2.RandomAccessibleInterval;
 import net.imglib2.algorithm.neighborhood.Neighborhood;
 import net.imglib2.algorithm.neighborhood.RectangleShape;
+import net.imglib2.img.Img;
 import net.imglib2.realtransform.AffineGet;
 import net.imglib2.realtransform.AffineTransform;
+import net.imglib2.type.numeric.ComplexType;
 import net.imglib2.type.numeric.RealType;
 import net.imglib2.view.ExtendedRandomAccessibleInterval;
 import net.imglib2.view.IntervalView;
 import net.imglib2.view.Views;
 
 @Plugin(type = Ops.Filter.PhaseCorrelate.class, name = Ops.Filter.PhaseCorrelate.NAME)
-public class ImgPhaseCorrelationOp<T extends RealType<T>>
+public class ImgPhaseCorrelationOp<T extends RealType<T>, C extends ComplexType<C>>
 		extends AbstractFunctionOp<RandomAccessibleInterval<T>, AffineGet>implements PhaseCorrelate {
 
 	@Parameter(type = ItemIO.INPUT)
@@ -40,26 +42,31 @@ public class ImgPhaseCorrelationOp<T extends RealType<T>>
 
 	@Override
 	public AffineGet compute(RandomAccessibleInterval<T> input) {
+		
+		// TODO Fix type exception: ComplexFloatType can't be cast to RealType
 				
+		Img<C> out1 = ops.create().img(input);
+		Img<C> out2 = ops.create().img(interval1);
+						
 		// calculate inverse FFT
-		RandomAccessibleInterval<T> fft1 = (RandomAccessibleInterval<T>) ops.filter().fft(input);
-		RandomAccessibleInterval<T> fft2 = (RandomAccessibleInterval<T>) ops.filter().fft(interval1);
+		RandomAccessibleInterval<C> fft1 = ops.filter().fft(out1, input);
+		RandomAccessibleInterval<C> fft2 = ops.filter().fft(out2, interval1);
 		
 		// call normalizeComplexImgOp 
-		RandomAccessibleInterval<T> img1 = ops.image().complexNormalize(fft1, normalizationThreshold);
-		RandomAccessibleInterval<T> img2 = ops.image().complexNormalizeConjugate(fft2, normalizationThreshold);
+		RandomAccessibleInterval<C> img1 = ops.image().complexNormalize(fft1, normalizationThreshold);
+		RandomAccessibleInterval<C> img2 = ops.image().complexNormalizeConjugate(fft2, normalizationThreshold);
 		
-		Cursor<T> fft1cursor = Views.flatIterable(fft1).cursor();
-		Cursor<T> fft2cursor = Views.flatIterable(fft2).cursor();		
+		Cursor<C> fft1cursor = Views.flatIterable(img1).cursor();
+		Cursor<C> fft2cursor = Views.flatIterable(img2).cursor();		
 		
 		while (fft1cursor.hasNext()) {
             fft1cursor.next().mul(fft2cursor.next());
         }
 		
 		// maybe create new output instance instead of using img2 as output
-		ops.filter().ifft(img2, img1);
+		ops.filter().ifft(img1, interval1);
 		
-		List<PhaseCorrelationPeak> peakList = extractPeaks(img2, numPeaks);
+		List<PhaseCorrelationPeak> peakList = extractPeaks(interval1, numPeaks);
 		
 		PhaseCorrelationPeak topPeak = peakList.get(peakList.size() - 1);
 		
