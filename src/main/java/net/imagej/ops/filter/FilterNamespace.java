@@ -44,6 +44,7 @@ import net.imglib2.RandomAccessibleInterval;
 import net.imglib2.img.Img;
 import net.imglib2.img.ImgFactory;
 import net.imglib2.outofbounds.OutOfBoundsFactory;
+import net.imglib2.realtransform.AffineGet;
 import net.imglib2.type.Type;
 import net.imglib2.type.numeric.ComplexType;
 import net.imglib2.type.numeric.RealType;
@@ -909,13 +910,18 @@ public class FilterNamespace extends AbstractNamespace {
 	}
 
 	/** Executes the "phase correlation" operation on the given arguments. */
-	@SuppressWarnings("unchecked")
 	@OpMethod(op = net.imagej.ops.filter.phasecorrelation.ImgPhaseCorrelationOp.class)
-	public <T extends RealType<T>> RandomAccessibleInterval<T> phaseCorrelate(
-		final RandomAccessibleInterval<T> in1, final RandomAccessibleInterval<T> in2 )
-	{
-		return (RandomAccessibleInterval<T>) ops().run(net.imagej.ops.filter.phasecorrelation.ImgPhaseCorrelationOp.class, 
-				in1,in2);
+	public <T extends RealType<T>> AffineGet phaseCorrelate(final RandomAccessibleInterval<T> in1, final RandomAccessibleInterval<T> in2, final float normalizationThreshold) {
+		final AffineGet result =
+			(AffineGet) ops().run(net.imagej.ops.filter.phasecorrelation.ImgPhaseCorrelationOp.class, in1, in2, normalizationThreshold);
+		return result;
+	}
+
+	@OpMethod(op = net.imagej.ops.filter.phasecorrelation.ImgPhaseCorrelationOp.class)
+	public <T extends RealType<T>> AffineGet phaseCorrelate(final RandomAccessibleInterval<T> in1, final RandomAccessibleInterval<T> in2, final float normalizationThreshold, final int numPeaks) {
+		final AffineGet result =
+			(AffineGet) ops().run(net.imagej.ops.filter.phasecorrelation.ImgPhaseCorrelationOp.class, in1, in2, normalizationThreshold, numPeaks);
+		return result;
 	}
 	
 	// -- Namespace methods --
