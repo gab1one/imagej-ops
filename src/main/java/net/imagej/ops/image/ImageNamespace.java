@@ -422,20 +422,20 @@ public class ImageNamespace extends AbstractNamespace {
 	
 
 	@OpMethod(op = net.imagej.ops.image.normalize.NormalizeComplexRAI.class)
-	public <T extends ComplexType<T>> RandomAccessibleInterval<T> complexNormalize(final RandomAccessibleInterval<T> in, final float normalizationThreshold) {
+	public <C extends ComplexType<C>> RandomAccessibleInterval<C> complexNormalize(final RandomAccessibleInterval<C> in, final float normalizationThreshold) {
 		@SuppressWarnings("unchecked")
-		final RandomAccessibleInterval<T> result =
-			(RandomAccessibleInterval<T>) ops().run(net.imagej.ops.image.normalize.NormalizeComplexRAI.class, in, normalizationThreshold);
+		final RandomAccessibleInterval<C> result =
+			(RandomAccessibleInterval<C>) ops().run(net.imagej.ops.image.normalize.NormalizeComplexRAI.class, in, normalizationThreshold);
 		return result;
 	}
 	
 
 	
 	@OpMethod(op = net.imagej.ops.image.normalize.NormalizeConjugateComplexRAI.class)
-	public <T extends ComplexType<T>> RandomAccessibleInterval<T> complexNormalizeConjugate(final RandomAccessibleInterval<T> in, final float normalizationThreshold) {
+	public <C extends ComplexType<C>> RandomAccessibleInterval<C> complexNormalizeConjugate(final RandomAccessibleInterval<C> in, final float normalizationThreshold) {
 		@SuppressWarnings("unchecked")
-		final RandomAccessibleInterval<T> result =
-			(RandomAccessibleInterval<T>) ops().run(net.imagej.ops.image.normalize.NormalizeConjugateComplexRAI.class, in, normalizationThreshold);
+		final RandomAccessibleInterval<C> result =
+			(RandomAccessibleInterval<C>) ops().run(net.imagej.ops.image.normalize.NormalizeConjugateComplexRAI.class, in, normalizationThreshold);
 		return result;
 	}
 
