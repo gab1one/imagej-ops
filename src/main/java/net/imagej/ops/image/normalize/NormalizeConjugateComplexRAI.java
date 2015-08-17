@@ -14,19 +14,19 @@ import net.imglib2.view.Views;
 
 
 @Plugin(type=Ops.Image.ComplexNormalizeConjugate.class, name=Ops.Image.ComplexNormalizeConjugate.NAME)
-public class NormalizeConjugateComplexRAI<T extends ComplexType<T>> extends AbstractFunctionOp<RandomAccessibleInterval<T>, RandomAccessibleInterval<T>> implements ComplexNormalizeConjugate {
+public class NormalizeConjugateComplexRAI<C extends ComplexType<C>> extends AbstractFunctionOp<RandomAccessibleInterval<C>, RandomAccessibleInterval<C>> implements ComplexNormalizeConjugate {
 
 	@Parameter(type=ItemIO.INPUT)
 	private float normalizationThreshold;
 	
 	@Override
-	public RandomAccessibleInterval<T> compute(RandomAccessibleInterval<T> input) {
+	public RandomAccessibleInterval<C> compute(RandomAccessibleInterval<C> input) {
 		
-		Cursor<T> cursor = Views.flatIterable(input).cursor();
+		Cursor<C> cursor = Views.flatIterable(input).cursor();
 		
 		while(cursor.hasNext()) {
 			cursor.next();
-			ComplexType<T> value = cursor.get();
+			ComplexType<C> value = cursor.get();
 			
 			final float real = cursor.get().getRealFloat();
 			final float complex = cursor.get().getImaginaryFloat();
