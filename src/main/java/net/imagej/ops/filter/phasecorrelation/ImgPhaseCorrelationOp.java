@@ -26,7 +26,8 @@ import net.imglib2.view.Views;
 
 @Plugin(type = Ops.Filter.PhaseCorrelate.class, name = Ops.Filter.PhaseCorrelate.NAME)
 public class ImgPhaseCorrelationOp<T extends RealType<T>, C extends ComplexType<C>>
-		extends AbstractFunctionOp<RandomAccessibleInterval<T>, AffineGet>implements PhaseCorrelate {
+		extends AbstractFunctionOp<RandomAccessibleInterval<T>, AffineGet>
+		implements PhaseCorrelate {
 
 	@Parameter(type = ItemIO.INPUT)
 	private RandomAccessibleInterval<T> interval1;
@@ -42,62 +43,74 @@ public class ImgPhaseCorrelationOp<T extends RealType<T>, C extends ComplexType<
 
 	@Override
 	public AffineGet compute(RandomAccessibleInterval<T> input) {
-		
+
 		// TODO Fix type exception: ComplexFloatType can't be cast to RealType
-				
+
 		Img<C> out1 = ops.create().img(input);
 		Img<C> out2 = ops.create().img(interval1);
-						
+
 		// calculate inverse FFT
 		RandomAccessibleInterval<C> fft1 = ops.filter().fft(out1, input);
 		RandomAccessibleInterval<C> fft2 = ops.filter().fft(out2, interval1);
-		
-		// call normalizeComplexImgOp 
-		RandomAccessibleInterval<C> img1 = ops.image().complexNormalize(fft1, normalizationThreshold);
-		RandomAccessibleInterval<C> img2 = ops.image().complexNormalizeConjugate(fft2, normalizationThreshold);
-		
+
+		// call normalizeComplexImgOp
+		RandomAccessibleInterval<C> img1 = ops.image().complexNormalize(fft1,
+				normalizationThreshold);
+		RandomAccessibleInterval<C> img2 = ops.image()
+				.complexNormalizeConjugate(fft2, normalizationThreshold);
+
 		Cursor<C> fft1cursor = Views.flatIterable(img1).cursor();
-		Cursor<C> fft2cursor = Views.flatIterable(img2).cursor();		
-		
+		Cursor<C> fft2cursor = Views.flatIterable(img2).cursor();
+
 		while (fft1cursor.hasNext()) {
-            fft1cursor.next().mul(fft2cursor.next());
-        }
-		
+			fft1cursor.next().mul(fft2cursor.next());
+		}
+
 		// maybe create new output instance instead of using img2 as output
 		ops.filter().ifft(img1, interval1);
-		
+
 		List<PhaseCorrelationPeak> peakList = extractPeaks(interval1, numPeaks);
-		
+
 		PhaseCorrelationPeak topPeak = peakList.get(peakList.size() - 1);
-		
+
 		long[] peakPosition = topPeak.getPosition();
 		int size = peakPosition.length;
-		
-		double[][] translationArray = new double[size][size];
-		for (int i = 0; i <= size; i++ ){
+		if (size < 3) {
+			size = 3;
+		}
+
+		double[][] translationArray = new double[size + 1][size + 1];
+		for (int i = 0; i <= size; i++) {
 			for (int j = 0; j <= size; j++) {
-				if ( i == j) {
+				if (i == j) {
 					translationArray[i][j] = 1;
 				} else if (j == size) {
-					translationArray[i][j] = peakPosition[i];
+					if (peakPosition.length <= i) {
+						translationArray[i][j] = 0;
+					} else {
+						translationArray[i][j] = peakPosition[i];
+					}
 				} else {
 					translationArray[i][j] = 0;
 				}
 			}
 		}
-		
+
 		Matrix test = new Matrix(translationArray);
-		
+
 		AffineGet affineTransformation = new AffineTransform(test);
-		
+
 		return affineTransformation; // return result
 	}
 
-	private List<PhaseCorrelationPeak> extractPeaks(final RandomAccessibleInterval<T> invPCM, final int numPeaks) {
-		FixedSizePriorityQueue<PhaseCorrelationPeak> peaks = new FixedSizePriorityQueue<PhaseCorrelationPeak>(numPeaks);
+	private List<PhaseCorrelationPeak> extractPeaks(
+			final RandomAccessibleInterval<T> invPCM, final int numPeaks) {
+		FixedSizePriorityQueue<PhaseCorrelationPeak> peaks = new FixedSizePriorityQueue<PhaseCorrelationPeak>(
+				numPeaks);
 		final int dims = invPCM.numDimensions();
 
-		ExtendedRandomAccessibleInterval<T, RandomAccessibleInterval<T>> extended = Views.extendZero(invPCM);
+		ExtendedRandomAccessibleInterval<T, RandomAccessibleInterval<T>> extended = Views
+				.extendZero(invPCM);
 		IntervalView<T> interval = Views.interval(extended, invPCM);
 
 		// TODO: OFFSETS?
@@ -123,7 +136,8 @@ public class ImgPhaseCorrelationOp<T extends RealType<T>, C extends ComplexType<
 			}
 			// queue ensures only n best are added.
 			// FIXME cast to float
-			PhaseCorrelationPeak peak = new PhaseCorrelationPeak(maxPos, (float) maxValue);
+			PhaseCorrelationPeak peak = new PhaseCorrelationPeak(maxPos,
+					(float) maxValue);
 			peak.setOriginalInvPCMPosition(maxPos);
 			peaks.add(peak);
 		}
