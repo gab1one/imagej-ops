@@ -12,10 +12,13 @@ import net.imagej.ops.OpService;
 import net.imagej.ops.Ops;
 import net.imagej.ops.Ops.Filter.PhaseCorrelate;
 import net.imglib2.Cursor;
+import net.imglib2.Dimensions;
+import net.imglib2.FinalDimensions;
 import net.imglib2.RandomAccessibleInterval;
 import net.imglib2.algorithm.neighborhood.Neighborhood;
 import net.imglib2.algorithm.neighborhood.RectangleShape;
 import net.imglib2.img.Img;
+import net.imglib2.img.display.imagej.ImageJFunctions;
 import net.imglib2.realtransform.AffineGet;
 import net.imglib2.realtransform.AffineTransform;
 import net.imglib2.type.numeric.ComplexType;
@@ -43,17 +46,27 @@ public class ImgPhaseCorrelationOp<T extends RealType<T>, C extends ComplexType<
 
 	@Override
 	public AffineGet compute(RandomAccessibleInterval<T> input) {
-
 		// TODO Fix type exception: ComplexFloatType can't be cast to RealType
+		
+		long[] dim = {0,0};
+		input.dimensions(dim);	
+		long[] fftSize = {0,0};
+		ops.filter().fftSize(dim, dim, fftSize, true, true);
+		// Give complexType as parameter, do also for out2
+		Img<C> out1 = ops.create().img(new FinalDimensions(fftSize));
 
-		Img<C> out1 = ops.create().img(input);
-		Img<C> out2 = ops.create().img(interval1);
-
-		// calculate inverse FFT
+		interval1.dimensions(dim);
+		ops.filter().fftSize(dim, dim, fftSize, true, true);
+		Img<C> out2 = ops.create().img(new FinalDimensions(fftSize));
+				
+		// calculate FFT
 		RandomAccessibleInterval<C> fft1 = ops.filter().fft(out1, input);
 		RandomAccessibleInterval<C> fft2 = ops.filter().fft(out2, interval1);
+		
+		ImageJFunctions.show(fft1);
+		ImageJFunctions.show(fft2);
 
-		// call normalizeComplexImgOp
+		// normalize fft imgs
 		RandomAccessibleInterval<C> img1 = ops.image().complexNormalize(fft1,
 				normalizationThreshold);
 		RandomAccessibleInterval<C> img2 = ops.image()
@@ -79,8 +92,9 @@ public class ImgPhaseCorrelationOp<T extends RealType<T>, C extends ComplexType<
 			size = 3;
 		}
 
-		double[][] translationArray = new double[size + 1][size + 1];
-		for (int i = 0; i <= size; i++) {
+		// fill translation matrix
+		double[][] translationArray = new double[size][size + 1];
+		for (int i = 0; i < size; i++) {
 			for (int j = 0; j <= size; j++) {
 				if (i == j) {
 					translationArray[i][j] = 1;
@@ -96,9 +110,8 @@ public class ImgPhaseCorrelationOp<T extends RealType<T>, C extends ComplexType<
 			}
 		}
 
-		Matrix test = new Matrix(translationArray);
-
-		AffineGet affineTransformation = new AffineTransform(test);
+		Matrix matrix = new Matrix(translationArray);
+		AffineGet affineTransformation = new AffineTransform(matrix);
 
 		return affineTransformation; // return result
 	}
@@ -115,7 +128,7 @@ public class ImgPhaseCorrelationOp<T extends RealType<T>, C extends ComplexType<
 
 		// TODO: OFFSETS?
 
-		// Define neightborhood for the Peaks
+		// Define neighborhood for the Peaks
 		final int neighborhoodSize = 3; // TODO
 		RectangleShape rs = new RectangleShape(neighborhoodSize, false);
 		Cursor<Neighborhood<T>> neighbour = rs.neighborhoods(interval).cursor();
