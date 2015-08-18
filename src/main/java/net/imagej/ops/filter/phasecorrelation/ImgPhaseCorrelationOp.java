@@ -63,9 +63,6 @@ public class ImgPhaseCorrelationOp<T extends RealType<T>, C extends ComplexType<
 		RandomAccessibleInterval<C> fft1 = ops.filter().fft(out1, input);
 		RandomAccessibleInterval<C> fft2 = ops.filter().fft(out2, interval1);
 		
-		ImageJFunctions.show(fft1);
-		ImageJFunctions.show(fft2);
-
 		// normalize fft imgs
 		RandomAccessibleInterval<C> img1 = ops.image().complexNormalize(fft1,
 				normalizationThreshold);
