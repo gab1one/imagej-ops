@@ -45,27 +45,27 @@ public class ImgPhaseCorrelationOp<T extends RealType<T>, C extends ComplexType<
 	@Override
 	public AffineGet compute(RandomAccessibleInterval<T> input) {
 		// TODO Fix type exception: ComplexFloatType can't be cast to RealType
-		
-		long[] dim = {0,0};
-		input.dimensions(dim);	
-		long[] fftSize = {0,0};
-		ops.filter().fftSize(dim, dim, fftSize, true, true);
+
+		long[] dim = new long[2];
+		long[] padded = new long[2];
+
+		input.dimensions(dim);
+		long[] fftSize = new long[2];
+		ops.filter().fftSize(dim, padded, fftSize, true, false);
 		// Give complexType as parameter, do also for out2
 		Img<C> out1 = ops.create().img(new FinalDimensions(fftSize));
+		RandomAccessibleInterval<C> fft1 = ops.filter().fft(out1, input, null, padded);
 
-		interval1.dimensions(dim);
-		ops.filter().fftSize(dim, dim, fftSize, true, true);
-		Img<C> out2 = ops.create().img(new FinalDimensions(fftSize));
-				
 		// calculate FFT
-		RandomAccessibleInterval<C> fft1 = ops.filter().fft(out1, input);
-		RandomAccessibleInterval<C> fft2 = ops.filter().fft(out2, interval1);
-		
+		interval1.dimensions(dim);
+		ops.filter().fftSize(dim, padded, fftSize, true, false);
+		Img<C> out2 = ops.create().img(new FinalDimensions(fftSize));
+		RandomAccessibleInterval<C> fft2 = ops.filter().fft(out2, interval1, null, padded);
+
+
 		// normalize fft imgs
-		RandomAccessibleInterval<C> img1 = ops.image().complexNormalize(fft1,
-				normalizationThreshold);
-		RandomAccessibleInterval<C> img2 = ops.image()
-				.complexNormalizeConjugate(fft2, normalizationThreshold);
+		RandomAccessibleInterval<C> img1 = ops.image().complexNormalize(fft1, normalizationThreshold);
+		RandomAccessibleInterval<C> img2 = ops.image().complexNormalizeConjugate(fft2, normalizationThreshold);
 
 		Cursor<C> fft1cursor = Views.flatIterable(img1).cursor();
 		Cursor<C> fft2cursor = Views.flatIterable(img2).cursor();
@@ -75,7 +75,7 @@ public class ImgPhaseCorrelationOp<T extends RealType<T>, C extends ComplexType<
 		}
 
 		// maybe create new output instance instead of using img2 as output
-		ops.filter().ifft(img1, interval1);
+		ops.filter().ifft(img1, img1);
 
 		List<PhaseCorrelationPeak> peakList = extractPeaks(interval1, numPeaks);
 
