@@ -1,4 +1,4 @@
-package net.imagej.ops.filter.phaseCorrelate;
+package net.imagej.ops.filter.phasecorrelation;
 
 import net.imagej.ops.AbstractOpTest;
 import net.imglib2.img.Img;
