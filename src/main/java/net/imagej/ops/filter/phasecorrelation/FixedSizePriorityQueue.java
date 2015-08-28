@@ -11,7 +11,7 @@ import java.util.TreeSet;
  *
  * @param <T>
  */
-public class FixedSizePriorityQueue<T extends Comparable<T>> {
+class FixedSizePriorityQueue<T extends Comparable<T>> {
 
     private final TreeSet<T> m_treeSet;
     private final int m_capacity;
