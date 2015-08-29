@@ -21,17 +21,17 @@ import net.imglib2.realtransform.AffineGet;
 import net.imglib2.realtransform.AffineTransform;
 import net.imglib2.type.numeric.ComplexType;
 import net.imglib2.type.numeric.RealType;
+import net.imglib2.type.numeric.complex.ComplexFloatType;
 import net.imglib2.view.ExtendedRandomAccessibleInterval;
 import net.imglib2.view.IntervalView;
 import net.imglib2.view.Views;
 
 @Plugin(type = Ops.Filter.PhaseCorrelate.class, name = Ops.Filter.PhaseCorrelate.NAME)
 public class ImgPhaseCorrelationOp<T extends RealType<T>, C extends ComplexType<C>>
-		extends AbstractFunctionOp<RandomAccessibleInterval<T>, AffineGet>
-		implements PhaseCorrelate {
+		extends AbstractFunctionOp<RandomAccessibleInterval<T>, AffineGet>implements PhaseCorrelate {
 
 	@Parameter(type = ItemIO.INPUT)
-	private RandomAccessibleInterval<T> interval1;
+	private RandomAccessibleInterval<T> input2;
 
 	@Parameter(type = ItemIO.INPUT)
 	private float normalizationThreshold;
@@ -43,41 +43,28 @@ public class ImgPhaseCorrelationOp<T extends RealType<T>, C extends ComplexType<
 	private OpService ops;
 
 	@Override
-	public AffineGet compute(RandomAccessibleInterval<T> input) {
-		// TODO Fix type exception: ComplexFloatType can't be cast to RealType
-
-		long[] dim = new long[2];
-		long[] padded = new long[2];
-
-		input.dimensions(dim);
-		long[] fftSize = new long[2];
-		ops.filter().fftSize(dim, padded, fftSize, true, false);
-		// Give complexType as parameter, do also for out2
-		Img<C> out1 = ops.create().img(new FinalDimensions(fftSize));
-		RandomAccessibleInterval<C> fft1 = ops.filter().fft(out1, input, null, padded);
+	public AffineGet compute(RandomAccessibleInterval<T> input1) {
 
 		// calculate FFT
-		interval1.dimensions(dim);
-		ops.filter().fftSize(dim, padded, fftSize, true, false);
-		Img<C> out2 = ops.create().img(new FinalDimensions(fftSize));
-		RandomAccessibleInterval<C> fft2 = ops.filter().fft(out2, interval1, null, padded);
-
+		RandomAccessibleInterval<C> fft1 = (RandomAccessibleInterval<C>) ops.filter().fft(null, input1, null, true);
+		RandomAccessibleInterval<C> fft2 = (RandomAccessibleInterval<C>) ops.filter().fft(null, input2, null, true);
 
 		// normalize fft imgs
-		RandomAccessibleInterval<C> img1 = ops.image().complexNormalize(fft1, normalizationThreshold);
-		RandomAccessibleInterval<C> img2 = ops.image().complexNormalizeConjugate(fft2, normalizationThreshold);
+		ops.image().complexNormalize(fft1, normalizationThreshold);
+		ops.image().complexNormalizeConjugate(fft2, normalizationThreshold);
 
-		Cursor<C> fft1cursor = Views.flatIterable(img1).cursor();
-		Cursor<C> fft2cursor = Views.flatIterable(img2).cursor();
+		//TODO put in function
+		Cursor<C> fft1cursor = Views.flatIterable(fft1).cursor();
+		Cursor<C> fft2cursor = Views.flatIterable(fft2).cursor();
 
 		while (fft1cursor.hasNext()) {
 			fft1cursor.next().mul(fft2cursor.next());
 		}
 
-		// maybe create new output instance instead of using img2 as output
-		ops.filter().ifft(img1, img1);
+		ops.filter().ifft(input1, fft1);
 
-		List<PhaseCorrelationPeak> peakList = extractPeaks(interval1, numPeaks);
+		// TODO extract method \/
+		List<PhaseCorrelationPeak> peakList = extractPeaks(input1, numPeaks);
 
 		PhaseCorrelationPeak topPeak = peakList.get(peakList.size() - 1);
 
@@ -111,17 +98,12 @@ public class ImgPhaseCorrelationOp<T extends RealType<T>, C extends ComplexType<
 		return affineTransformation; // return result
 	}
 
-	private List<PhaseCorrelationPeak> extractPeaks(
-			final RandomAccessibleInterval<T> invPCM, final int numPeaks) {
-		FixedSizePriorityQueue<PhaseCorrelationPeak> peaks = new FixedSizePriorityQueue<PhaseCorrelationPeak>(
-				numPeaks);
+	private List<PhaseCorrelationPeak> extractPeaks(final RandomAccessibleInterval<T> invPCM, final int numPeaks) {
+		FixedSizePriorityQueue<PhaseCorrelationPeak> peaks = new FixedSizePriorityQueue<PhaseCorrelationPeak>(numPeaks);
 		final int dims = invPCM.numDimensions();
 
-		ExtendedRandomAccessibleInterval<T, RandomAccessibleInterval<T>> extended = Views
-				.extendZero(invPCM);
+		ExtendedRandomAccessibleInterval<T, RandomAccessibleInterval<T>> extended = Views.extendZero(invPCM);
 		IntervalView<T> interval = Views.interval(extended, invPCM);
-
-		// TODO: OFFSETS?
 
 		// Define neighborhood for the Peaks
 		final int neighborhoodSize = 3; // TODO
@@ -143,9 +125,7 @@ public class ImgPhaseCorrelationOp<T extends RealType<T>, C extends ComplexType<
 				}
 			}
 			// queue ensures only n best are added.
-			// FIXME cast to float
-			PhaseCorrelationPeak peak = new PhaseCorrelationPeak(maxPos,
-					(float) maxValue);
+			PhaseCorrelationPeak peak = new PhaseCorrelationPeak(maxPos,  maxValue);
 			peak.setOriginalInvPCMPosition(maxPos);
 			peaks.add(peak);
 		}
