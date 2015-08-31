@@ -1,11 +1,7 @@
 package net.imagej.ops.image.fusion;
 
-import org.scijava.ItemIO;
-import org.scijava.plugin.Parameter;
 import org.scijava.plugin.Plugin;
 
-import net.imagej.ops.AbstractFunctionOp;
-import net.imagej.ops.OpService;
 import net.imagej.ops.Ops;
 import net.imagej.ops.Ops.Image.FuseMin;
 import net.imglib2.Cursor;
@@ -14,18 +10,12 @@ import net.imglib2.RandomAccess;
 import net.imglib2.RandomAccessibleInterval;
 import net.imglib2.img.Img;
 import net.imglib2.type.numeric.RealType;
-import net.imglib2.util.Intervals;
 import net.imglib2.view.Views;
 
 @Plugin(type = Ops.Image.FuseMin.class, name = Ops.Image.FuseMin.NAME)
 public class MinFusion<T extends RealType<T>>
 		extends AbstractFusionOp<T> implements FuseMin {
 	
-
-	@Parameter
-	private OpService ops;
-	
-
 	@Override
 	public RandomAccessibleInterval<T> compute(RandomAccessibleInterval<T> in1) {
 		
@@ -46,7 +36,8 @@ public class MinFusion<T extends RealType<T>>
                 Views.offset(Views.extendValue(in2, in1.randomAccess().get()),
                         offset).randomAccess();
 
-        T type = (T) ops.create().nativeType(img1.get().getClass());
+        @SuppressWarnings("unchecked")
+		T type = (T) ops.create().nativeType(img1.get().getClass());
         Img<T> outImg = ops.create().img(outInterval, type);
         Cursor<T> outCursor = outImg.localizingCursor();
         long[] pos = new long[outImg.numDimensions()];

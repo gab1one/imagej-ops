@@ -4,6 +4,7 @@ import org.scijava.ItemIO;
 import org.scijava.plugin.Parameter;
 
 import net.imagej.ops.AbstractFunctionOp;
+import net.imagej.ops.OpService;
 import net.imglib2.FinalInterval;
 import net.imglib2.RandomAccessibleInterval;
 import net.imglib2.util.Intervals;
@@ -15,13 +16,16 @@ public abstract class AbstractFusionOp<T> extends AbstractFunctionOp<RandomAcces
 	
 	@Parameter(type=ItemIO.INPUT)
 	protected long[] offset;
-
 	
-	protected FinalInterval calculateOutputSize(RandomAccessibleInterval<T> in1, RandomAccessibleInterval<T> in2, long[] offset) {
-		long[] outImgsize = new long[in1.numDimensions()];
-        for (int i = 0; i < in1.numDimensions(); i++) {
-            outImgsize[i] = in1.dimension(i) + in2.dimension(i)
-                    - (in1.dimension(i) - Math.abs(offset[i]));
+	@Parameter
+	protected OpService ops;
+	
+	
+	protected FinalInterval calculateOutputSize(RandomAccessibleInterval<T> input1, RandomAccessibleInterval<T> input2, long[] offset) {
+		long[] outImgsize = new long[input1.numDimensions()];
+        for (int i = 0; i < input1.numDimensions(); i++) {
+            outImgsize[i] = input1.dimension(i) + input2.dimension(i)
+                    - (input1.dimension(i) - Math.abs(offset[i]));
         }
 
         FinalInterval outInterval =
