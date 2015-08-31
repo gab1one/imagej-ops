@@ -186,11 +186,6 @@ public class ImageNamespace extends AbstractNamespace {
 	}
 	
 	// -- fusion --
-	@OpMethod(op = Ops.Image.FuseMin.class)
-	public Object fuseMin(final Object... args) {
-		return ops().run(Ops.Image.FuseMin.NAME, args);
-	}
-	
 	
 	@OpMethod(op = net.imagej.ops.image.fusion.MinFusion.class)
 	public <T extends RealType<T>> RandomAccessibleInterval<T> fuseMin(final RandomAccessibleInterval<T> in,
@@ -198,6 +193,16 @@ public class ImageNamespace extends AbstractNamespace {
 		@SuppressWarnings("unchecked")
 		final RandomAccessibleInterval<T> result =
 			(RandomAccessibleInterval<T>) ops().run(net.imagej.ops.image.fusion.MinFusion.class, in, in2, offset);
+		return result;
+	}
+	
+	
+	@OpMethod(op = net.imagej.ops.image.fusion.MaxFusion.class)
+	public <T extends RealType<T>> RandomAccessibleInterval<T> fuseMax(final RandomAccessibleInterval<T> in, 
+			final RandomAccessibleInterval<T> in2, final long... offset) {
+		@SuppressWarnings("unchecked")
+		final RandomAccessibleInterval<T> result =
+			(RandomAccessibleInterval<T>) ops().run(net.imagej.ops.image.fusion.MaxFusion.class, in, in2, offset);
 		return result;
 	}
 
