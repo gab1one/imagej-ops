@@ -8,22 +8,20 @@ import net.imglib2.RandomAccessibleInterval;
 import net.imglib2.type.numeric.RealType;
 
 @Plugin(type = Ops.Image.FuseMin.class, name = Ops.Image.FuseMin.NAME)
-public class MinFusion<T extends RealType<T>>
-		extends AbstractFusionOp<T> implements FuseMin {
-	
+public class MinFusion<T extends RealType<T>> extends AbstractFusionOp<T>implements FuseMin {
+
 	@Override
 	public T getPixelValue(T in1, T in2) {
 		if (in1.compareTo(in2) < 0) {
-          return in1;
-      } else {
-          return in2;
-      }
+			return in1;
+		} else {
+			return in2;
+		}
 	}
 
 	@Override
-	public long[] getExtensionValue(RandomAccessibleInterval<T> in) {
-		long[] maxPos = new long[in.numDimensions()];
-		in.max(maxPos);
-		return maxPos;
+	public T getExtensionValue(T in) {
+		in.setZero();
+		return in;
 	}
 }

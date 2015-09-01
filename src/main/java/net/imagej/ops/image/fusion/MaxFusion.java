@@ -20,10 +20,9 @@ public class MaxFusion<T extends RealType<T>> extends AbstractFusionOp<T> implem
 	}
 
 	@Override
-	public long[] getExtensionValue(RandomAccessibleInterval<T> in) {
-		long[] minPos = new long[in.numDimensions()];
-		in.min(minPos);
-		return minPos;
+	public T getExtensionValue(T in) {
+		in.setReal(in.getMaxValue());
+		return in;
 	}
 
 
