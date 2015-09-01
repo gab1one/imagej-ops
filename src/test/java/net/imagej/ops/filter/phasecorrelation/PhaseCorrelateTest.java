@@ -1,11 +1,10 @@
 package net.imagej.ops.filter.phasecorrelation;
 
+import org.junit.Test;
+
 import net.imagej.ops.AbstractOpTest;
 import net.imglib2.img.Img;
-import net.imglib2.realtransform.AffineGet;
 import net.imglib2.type.numeric.real.FloatType;
-
-import org.junit.Test;
 
 
 public class PhaseCorrelateTest extends AbstractOpTest {
@@ -16,7 +15,7 @@ public class PhaseCorrelateTest extends AbstractOpTest {
 
 		Img<FloatType> in = generateFloatArrayTestImg(true, new long[] {10,10});
 		Img<FloatType> in2 = generateFloatArrayTestImg(true, new long[] {10,10});
-		AffineGet out1;
+		long[] out1;
 		final float threshold = 1E-5f;
 
 
