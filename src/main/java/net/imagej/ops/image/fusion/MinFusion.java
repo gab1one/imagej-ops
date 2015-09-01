@@ -4,7 +4,6 @@ import org.scijava.plugin.Plugin;
 
 import net.imagej.ops.Ops;
 import net.imagej.ops.Ops.Image.FuseMin;
-import net.imglib2.RandomAccessibleInterval;
 import net.imglib2.type.numeric.RealType;
 
 @Plugin(type = Ops.Image.FuseMin.class, name = Ops.Image.FuseMin.NAME)
@@ -21,7 +20,7 @@ public class MinFusion<T extends RealType<T>> extends AbstractFusionOp<T>impleme
 
 	@Override
 	public T getExtensionValue(T in) {
-		in.setZero();
+		in.setReal(in.getMaxValue());
 		return in;
 	}
 }

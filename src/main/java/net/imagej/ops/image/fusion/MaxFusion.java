@@ -4,7 +4,6 @@ import org.scijava.plugin.Plugin;
 
 import net.imagej.ops.Ops;
 import net.imagej.ops.Ops.Image.FuseMax;
-import net.imglib2.RandomAccessibleInterval;
 import net.imglib2.type.numeric.RealType;
 
 @Plugin(type=Ops.Image.FuseMax.class, name=Ops.Image.FuseMax.NAME)
@@ -21,11 +20,8 @@ public class MaxFusion<T extends RealType<T>> extends AbstractFusionOp<T> implem
 
 	@Override
 	public T getExtensionValue(T in) {
-		in.setReal(in.getMaxValue());
+		in.setZero();
 		return in;
 	}
-
-
-	
 
 }
