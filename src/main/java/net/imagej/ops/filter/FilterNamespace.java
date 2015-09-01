@@ -1013,7 +1013,6 @@ public class FilterNamespace extends AbstractNamespace {
 		return result;
 	}
 	
-	// -- mean filter --
 	
 	/** Executes the "mean" filter operation on the given arguments. */
 	@OpMethod(op = net.imagej.ops.filter.mean.DefaultMeanFilter.class)
@@ -1189,14 +1188,17 @@ public class FilterNamespace extends AbstractNamespace {
 		return result;
 	}
 
-	/** Executes the "phase correlation" operation on the given arguments. */
+	/** Executes the "phase correlation" operation on the given arguments. 
+	 * Note: in1 will be modified, make sure to store a deep copy of this object. */
 	@OpMethod(op = net.imagej.ops.filter.phasecorrelation.ImgPhaseCorrelationOp.class)
 	public <T extends RealType<T>> long[] phaseCorrelate(final RandomAccessibleInterval<T> in1, final RandomAccessibleInterval<T> in2, final float normalizationThreshold) {
 		final long[] result =
 			(long[]) ops().run(net.imagej.ops.filter.phasecorrelation.ImgPhaseCorrelationOp.class, in1, in2, normalizationThreshold);
 		return result;
 	}
-
+	
+	/** Executes the "phase correlation" operation on the given arguments. 
+	 * Note: in1 will be modified, make sure to store a deep copy of this object. */
 	@OpMethod(op = net.imagej.ops.filter.phasecorrelation.ImgPhaseCorrelationOp.class)
 	public <T extends RealType<T>> long[] phaseCorrelate(final RandomAccessibleInterval<T> in1, final RandomAccessibleInterval<T> in2, final float normalizationThreshold, final int numPeaks) {
 		final long[] result =

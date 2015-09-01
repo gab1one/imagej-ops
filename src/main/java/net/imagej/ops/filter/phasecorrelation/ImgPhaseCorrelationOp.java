@@ -55,9 +55,9 @@ public class ImgPhaseCorrelationOp<T extends RealType<T>, C extends ComplexType<
 			fft1cursor.next().mul(fft2cursor.next());
 		}
 
+		// FIXME this line alters input1
 		ops.filter().ifft(input1, fft1);
 
-		// TODO extract method \/
 		List<PhaseCorrelationPeak> peakList = extractPeaks(input1, numPeaks);
 
 		PhaseCorrelationPeak topPeak = peakList.get(peakList.size() - 1);
