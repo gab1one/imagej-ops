@@ -6,29 +6,23 @@ import org.scijava.ItemIO;
 import org.scijava.plugin.Parameter;
 import org.scijava.plugin.Plugin;
 
-import Jama.Matrix;
 import net.imagej.ops.AbstractFunctionOp;
 import net.imagej.ops.OpService;
 import net.imagej.ops.Ops;
 import net.imagej.ops.Ops.Filter.PhaseCorrelate;
 import net.imglib2.Cursor;
-import net.imglib2.FinalDimensions;
 import net.imglib2.RandomAccessibleInterval;
 import net.imglib2.algorithm.neighborhood.Neighborhood;
 import net.imglib2.algorithm.neighborhood.RectangleShape;
-import net.imglib2.img.Img;
-import net.imglib2.realtransform.AffineGet;
-import net.imglib2.realtransform.AffineTransform;
 import net.imglib2.type.numeric.ComplexType;
 import net.imglib2.type.numeric.RealType;
-import net.imglib2.type.numeric.complex.ComplexFloatType;
 import net.imglib2.view.ExtendedRandomAccessibleInterval;
 import net.imglib2.view.IntervalView;
 import net.imglib2.view.Views;
 
 @Plugin(type = Ops.Filter.PhaseCorrelate.class, name = Ops.Filter.PhaseCorrelate.NAME)
 public class ImgPhaseCorrelationOp<T extends RealType<T>, C extends ComplexType<C>>
-		extends AbstractFunctionOp<RandomAccessibleInterval<T>, AffineGet>implements PhaseCorrelate {
+		extends AbstractFunctionOp<RandomAccessibleInterval<T>, long[]>implements PhaseCorrelate {
 
 	@Parameter(type = ItemIO.INPUT)
 	private RandomAccessibleInterval<T> input2;
@@ -43,7 +37,7 @@ public class ImgPhaseCorrelationOp<T extends RealType<T>, C extends ComplexType<
 	private OpService ops;
 
 	@Override
-	public AffineGet compute(RandomAccessibleInterval<T> input1) {
+	public long[] compute(RandomAccessibleInterval<T> input1) {
 
 		// calculate FFT
 		RandomAccessibleInterval<C> fft1 = (RandomAccessibleInterval<C>) ops.filter().fft(null, input1, null, true);
@@ -69,33 +63,8 @@ public class ImgPhaseCorrelationOp<T extends RealType<T>, C extends ComplexType<
 		PhaseCorrelationPeak topPeak = peakList.get(peakList.size() - 1);
 
 		long[] peakPosition = topPeak.getPosition();
-		int size = peakPosition.length;
-		if (size < 3) {
-			size = 3;
-		}
-
-		// fill translation matrix
-		double[][] translationArray = new double[size][size + 1];
-		for (int i = 0; i < size; i++) {
-			for (int j = 0; j <= size; j++) {
-				if (i == j) {
-					translationArray[i][j] = 1;
-				} else if (j == size) {
-					if (peakPosition.length <= i) {
-						translationArray[i][j] = 0;
-					} else {
-						translationArray[i][j] = peakPosition[i];
-					}
-				} else {
-					translationArray[i][j] = 0;
-				}
-			}
-		}
-
-		Matrix matrix = new Matrix(translationArray);
-		AffineGet affineTransformation = new AffineTransform(matrix);
-
-		return affineTransformation; // return result
+		
+		return peakPosition;
 	}
 
 	private List<PhaseCorrelationPeak> extractPeaks(final RandomAccessibleInterval<T> invPCM, final int numPeaks) {

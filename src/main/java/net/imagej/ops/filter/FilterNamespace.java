@@ -1191,16 +1191,16 @@ public class FilterNamespace extends AbstractNamespace {
 
 	/** Executes the "phase correlation" operation on the given arguments. */
 	@OpMethod(op = net.imagej.ops.filter.phasecorrelation.ImgPhaseCorrelationOp.class)
-	public <T extends RealType<T>> AffineGet phaseCorrelate(final RandomAccessibleInterval<T> in1, final RandomAccessibleInterval<T> in2, final float normalizationThreshold) {
-		final AffineGet result =
-			(AffineGet) ops().run(net.imagej.ops.filter.phasecorrelation.ImgPhaseCorrelationOp.class, in1, in2, normalizationThreshold);
+	public <T extends RealType<T>> long[] phaseCorrelate(final RandomAccessibleInterval<T> in1, final RandomAccessibleInterval<T> in2, final float normalizationThreshold) {
+		final long[] result =
+			(long[]) ops().run(net.imagej.ops.filter.phasecorrelation.ImgPhaseCorrelationOp.class, in1, in2, normalizationThreshold);
 		return result;
 	}
 
 	@OpMethod(op = net.imagej.ops.filter.phasecorrelation.ImgPhaseCorrelationOp.class)
-	public <T extends RealType<T>> AffineGet phaseCorrelate(final RandomAccessibleInterval<T> in1, final RandomAccessibleInterval<T> in2, final float normalizationThreshold, final int numPeaks) {
-		final AffineGet result =
-			(AffineGet) ops().run(net.imagej.ops.filter.phasecorrelation.ImgPhaseCorrelationOp.class, in1, in2, normalizationThreshold, numPeaks);
+	public <T extends RealType<T>> long[] phaseCorrelate(final RandomAccessibleInterval<T> in1, final RandomAccessibleInterval<T> in2, final float normalizationThreshold, final int numPeaks) {
+		final long[] result =
+			(long[]) ops().run(net.imagej.ops.filter.phasecorrelation.ImgPhaseCorrelationOp.class, in1, in2, normalizationThreshold, numPeaks);
 		return result;
 	}
 	
