@@ -40,14 +40,15 @@ public class ImgPhaseCorrelationOp<T extends RealType<T>, C extends ComplexType<
 	public long[] compute(RandomAccessibleInterval<T> input1) {
 
 		// calculate FFT
+		@SuppressWarnings("unchecked")
 		RandomAccessibleInterval<C> fft1 = (RandomAccessibleInterval<C>) ops.filter().fft(null, input1, null, true);
+		@SuppressWarnings("unchecked")
 		RandomAccessibleInterval<C> fft2 = (RandomAccessibleInterval<C>) ops.filter().fft(null, input2, null, true);
 
 		// normalize fft imgs
 		ops.image().complexNormalize(fft1, normalizationThreshold);
 		ops.image().complexNormalizeConjugate(fft2, normalizationThreshold);
 
-		//TODO put in function
 		Cursor<C> fft1cursor = Views.flatIterable(fft1).cursor();
 		Cursor<C> fft2cursor = Views.flatIterable(fft2).cursor();
 
@@ -55,7 +56,6 @@ public class ImgPhaseCorrelationOp<T extends RealType<T>, C extends ComplexType<
 			fft1cursor.next().mul(fft2cursor.next());
 		}
 
-		// FIXME this line alters input1
 		ops.filter().ifft(input1, fft1);
 
 		List<PhaseCorrelationPeak> peakList = extractPeaks(input1, numPeaks);
@@ -75,7 +75,7 @@ public class ImgPhaseCorrelationOp<T extends RealType<T>, C extends ComplexType<
 		IntervalView<T> interval = Views.interval(extended, invPCM);
 
 		// Define neighborhood for the Peaks
-		final int neighborhoodSize = 3; // TODO
+		final int neighborhoodSize = 3; 
 		RectangleShape rs = new RectangleShape(neighborhoodSize, false);
 		Cursor<Neighborhood<T>> neighbour = rs.neighborhoods(interval).cursor();
 
