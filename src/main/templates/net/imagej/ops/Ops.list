@@ -86,7 +86,9 @@ namespaces = ```
 		[name: "invert",             iface: "Invert"],
 		[name: "normalize",          iface: "Normalize",           aliases: ["norm"]],
 		[name: "project",            iface: "Project"],
-		[name: "scale",              iface: "Scale",               aliases: ["resize"]]
+		[name: "scale",              iface: "Scale",               aliases: ["resize"]],
+		[name: "complexNormalize",   iface: "ComplexNormalize"],
+		[name: "complexNormalizeConjugate", iface: "ComplexNormalizeConjugate"]
 	]],
 	[name: "labeling",   iface: "Labeling", ops: [
 		[name: "cca",                iface: "CCA",                 aliases: ["connectedComponents", "connectedComponentAnalysis"]]

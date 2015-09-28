@@ -46,6 +46,7 @@ import net.imglib2.histogram.Histogram1d;
 import net.imglib2.img.Img;
 import net.imglib2.interpolation.InterpolatorFactory;
 import net.imglib2.type.Type;
+import net.imglib2.type.numeric.ComplexType;
 import net.imglib2.type.numeric.RealType;
 
 import org.scijava.plugin.Plugin;
@@ -394,6 +395,25 @@ public class ImageNamespace extends AbstractNamespace {
 			(IterableInterval<T>) ops().run(
 				net.imagej.ops.image.normalize.NormalizeIterableIntervalFunction.class,
 				in, sourceMin, sourceMax, targetMin, targetMax, isLazy);
+		return result;
+	}
+	
+
+	@OpMethod(op = net.imagej.ops.image.normalize.NormalizeComplexRAI.class)
+	public <C extends ComplexType<C>> RandomAccessibleInterval<C> complexNormalize(final RandomAccessibleInterval<C> in, final float normalizationThreshold) {
+		@SuppressWarnings("unchecked")
+		final RandomAccessibleInterval<C> result =
+			(RandomAccessibleInterval<C>) ops().run(net.imagej.ops.image.normalize.NormalizeComplexRAI.class, in, normalizationThreshold);
+		return result;
+	}
+	
+
+	
+	@OpMethod(op = net.imagej.ops.image.normalize.NormalizeConjugateComplexRAI.class)
+	public <C extends ComplexType<C>> RandomAccessibleInterval<C> complexNormalizeConjugate(final RandomAccessibleInterval<C> in, final float normalizationThreshold) {
+		@SuppressWarnings("unchecked")
+		final RandomAccessibleInterval<C> result =
+			(RandomAccessibleInterval<C>) ops().run(net.imagej.ops.image.normalize.NormalizeConjugateComplexRAI.class, in, normalizationThreshold);
 		return result;
 	}
 
