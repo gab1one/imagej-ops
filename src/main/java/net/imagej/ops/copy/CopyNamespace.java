@@ -7,13 +7,13 @@
  * %%
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
- * 
+ *
  * 1. Redistributions of source code must retain the above copyright notice,
  *    this list of conditions and the following disclaimer.
  * 2. Redistributions in binary form must reproduce the above copyright notice,
  *    this list of conditions and the following disclaimer in the documentation
  *    and/or other materials provided with the distribution.
- * 
+ *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
@@ -179,8 +179,45 @@ public class CopyNamespace extends AbstractNamespace {
 	@OpMethod(op = net.imagej.ops.copy.CopyType.class)
 	public <T extends Type<T>> T type(final T out, final T in) {
 		@SuppressWarnings("unchecked")
-		final T result = (T) ops().run(net.imagej.ops.copy.CopyType.class, out,
-				in);
+		final T result = (T) ops().run(net.imagej.ops.copy.CopyType.class, out, in);
+		return result;
+	}
+
+	@OpMethod(op = net.imagej.ops.copy.CopyIItoImg.class)
+	public <T extends NativeType<T>> Img<T> img(final IterableInterval<T> in) {
+		@SuppressWarnings("unchecked")
+		final Img<T> result = (Img<T>) ops().run(
+			net.imagej.ops.copy.CopyIItoImg.class, in);
+		return result;
+	}
+
+	@OpMethod(op = net.imagej.ops.copy.CopyIItoImg.class)
+	public <T extends NativeType<T>> Img<T> img(final Img<T> out,
+		final IterableInterval<T> in)
+	{
+		@SuppressWarnings("unchecked")
+		final Img<T> result = (Img<T>) ops().run(
+			net.imagej.ops.copy.CopyIItoImg.class, out, in);
+		return result;
+	}
+
+	@OpMethod(op = net.imagej.ops.copy.CopyRAItoImg.class)
+	public <T extends NativeType<T>> Img<T> img(
+		final RandomAccessibleInterval<T> in)
+	{
+		@SuppressWarnings("unchecked")
+		final Img<T> result = (Img<T>) ops().run(
+			net.imagej.ops.copy.CopyRAItoImg.class, in);
+		return result;
+	}
+
+	@OpMethod(op = net.imagej.ops.copy.CopyRAItoImg.class)
+	public <T extends NativeType<T>> Img<T> img(final Img<T> out,
+		final RandomAccessibleInterval<T> in)
+	{
+		@SuppressWarnings("unchecked")
+		final Img<T> result = (Img<T>) ops().run(
+			net.imagej.ops.copy.CopyRAItoImg.class, out, in);
 		return result;
 	}
 }
