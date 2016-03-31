@@ -32,6 +32,7 @@ package net.imagej.ops.copy;
 
 import net.imagej.ops.Contingent;
 import net.imagej.ops.Ops;
+import net.imagej.ops.special.chain.RAIs;
 import net.imagej.ops.special.computer.Computers;
 import net.imagej.ops.special.computer.UnaryComputerOp;
 import net.imagej.ops.special.function.Functions;
@@ -41,7 +42,9 @@ import net.imglib2.RandomAccessible;
 import net.imglib2.RandomAccessibleInterval;
 import net.imglib2.img.Img;
 import net.imglib2.type.NativeType;
+import net.imglib2.type.Type;
 import net.imglib2.util.Intervals;
+import net.imglib2.util.Util;
 
 import org.scijava.plugin.Plugin;
 
@@ -59,16 +62,27 @@ public class CopyRAItoImg<T extends NativeType<T>> extends
 	Ops.Copy.Img, Contingent
 {
 
-	private UnaryComputerOp<RandomAccessible<T>, RandomAccessible<T>> copyComputer;
+	private UnaryComputerOp<RandomAccessibleInterval<T>, RandomAccessibleInterval<T>> mapComputer;
 
 	private UnaryFunctionOp<RandomAccessibleInterval<T>, Img<T>> createFunc;
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Override
 	public void initialize() {
-		copyComputer = Computers.unary(ops(), CopyII.class, in(), in());
+
+		final Object outType = out() == null ? Type.class : Util
+			.getTypeFromInterval(out());
+
+		final Object inType = in() == null ? NativeType.class : Util
+			.getTypeFromInterval(in());
+
+		final UnaryComputerOp<?, ?> typeComputer = Computers.unary(ops(),
+			Ops.Copy.Type.class, outType, inType);
+		mapComputer = RAIs.computer(ops(), Ops.Map.class, in(), typeComputer);
+
 		createFunc = (UnaryFunctionOp) Functions.unary(ops(), Ops.Create.Img.class,
-			RandomAccessibleInterval.class, in());
+			Img.class, in());
+
 	}
 
 	@Override
@@ -80,7 +94,7 @@ public class CopyRAItoImg<T extends NativeType<T>> extends
 	public void compute1(final RandomAccessibleInterval<T> input,
 		final Img<T> output)
 	{
-		copyComputer.compute1(input, output);
+		mapComputer.compute1(input, output);
 	}
 
 	@Override
